@@ -3,8 +3,8 @@
     <div class="container mt-5" >
         <form action="/search" method="post">
             <div class="form-outline mb-4">
-                <input type="text" name="search_info" id="search" class="form-control"/>
-                <label class="form-label" for="search">Search</label>
+                <label class="form-label visually-hidden" for="search">Search</label>
+                <input type="text" name="search_info" id="search" class="form-control" placeholder="Search" />
             </div>
         </form>
     {% if results is defined  %}
