@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title>{{ title }}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap/mdb.min.css') }}">
-    <script src="{{ url_for('static', filename='js/bootstrap/mdb.min.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap/bootstrap.css') }}"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}"/>
+
+    <script src="{{ url_for('static', filename='js/bootstrap/bootstrap.bundle.js') }}"></script>
     {% block extra_css %}{% endblock %}
 </head>
 <body>
