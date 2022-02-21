@@ -1,0 +1,52 @@
+version: "3.7"
+services:
+  rabbitmq-flask:
+    hostname: rabbit-flask
+    container_name: rabbit-flask
+    image: 'rabbitmq:3.8-management-alpine'
+    ports:
+      - '15672:15672'
+      - '5672:5672'
+    environment:
+      - RABBITMQ_DEFAULT_USER=idoT
+      - RABBITMQ_DEFAULT_PASS=JellyBeans
+    volumes:
+      - rabbitmq_log:/var/log/rabbitmq
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      timeout: 30s
+      retries: 3
+
+  postgres-flask:
+    hostname: postgres-flask
+    container_name: postgres-flask
+    image: 'postgres'
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_PASSWORD=ShrimpCalzone
+      - POSTGRES_USER=idoT
+      - POSTGRES_DB=PostgresDB
+
+  worker:
+    container_name: rabbit-flask-worker
+    build: './worker'
+    environment:
+      - PYTHONUNBUFFERED=1
+    depends_on:
+      - server
+
+  server:
+    container_name: rabbit-flask-server
+    build: './server'
+    ports:
+    - 5000:5000
+    depends_on:
+      - rabbitmq-flask
+      - postgres-flask
+
+volumes:
+  rabbitmq_log:
+  rabbitmq_data:
