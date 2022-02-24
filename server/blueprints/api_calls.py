@@ -28,14 +28,15 @@ def search():
         for song in spotify_results['tracks']['items']:
             song = song['data']
             result = {
-                'id': song['id'],
+                'spotify_id': song['id'],
                 'name': song['name'],
                 'album': song['albumOfTrack']['name'],
                 'artist': song['artists']['items'][0]['profile']['name'],
             }
             audiodb_result = request_song_info_audiodb(result['artist'], result['name']).json()
             if audiodb_result['track'] is not None:
-                result['musicVideo'] = audiodb_result['track'][0]['strMusicVid']
+                result['music_video'] = audiodb_result['track'][0]['strMusicVid']
+                result['audiodb_id']
             results.append(result)
 
         #return context['results']
