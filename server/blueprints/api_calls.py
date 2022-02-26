@@ -43,6 +43,17 @@ def search():
         return render_template('search.html', title=title, results=results, placeholder=request.form['search_info'])
 
 
+@api_calls.route('/song', methods=['GET', 'POST'])
+def song_profile():
+    args = request.args
+    if "spotify_id" in args:
+        spotify_id = args["spotify_id"]
+    if "audiodb_id" in args:
+        audiodb_id = args["audiodb_id"]
+    title = "Song Name"
+    return render_template('song_profile.html', title=title, )
+
+
 def request_song_info_genius(search_info):
     base_url = 'https://api.genius.com'
     headers = {'Authorization': 'Bearer ' + os.getenv('GENIUS_AUTH')}
