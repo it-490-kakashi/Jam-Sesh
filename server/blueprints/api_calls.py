@@ -46,12 +46,15 @@ def search():
 @api_calls.route('/song', methods=['GET', 'POST'])
 def song_profile():
     args = request.args
+    song_ids = ""
     if "spotify_id" in args:
         spotify_id = args["spotify_id"]
+        song_ids += f"{spotify_id}"
     if "audiodb_id" in args:
         audiodb_id = args["audiodb_id"]
+        song_ids += f" : {audiodb_id}"
     title = "Song Name"
-    return render_template('song_profile.html', title=title, )
+    return render_template('song_profile.html', title=title, song_ids=song_ids)
 
 
 def request_song_info_genius(search_info):
