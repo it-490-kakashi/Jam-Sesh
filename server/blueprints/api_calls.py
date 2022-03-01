@@ -41,10 +41,17 @@ def search():
 
 @api_calls.route('/song', methods=['GET', 'POST'])
 def song_profile():
+    from urllib import parse
+
     title = "Song Profile Page"
     if request.args is not None:
         result = request_song_id_genius(request.args['id']).json()
         result = result['response']['song']
+        for media in result['media']:
+            if media['provider'] == "youtube":
+                url = media['url']
+                query_def = parse.parse_qs(parse.urlparse(url).query)['v'][0]
+                result['youtube_id'] = query_def
         title = result['full_title']
 
     return render_template('song_profile.html', title=title, result=result)

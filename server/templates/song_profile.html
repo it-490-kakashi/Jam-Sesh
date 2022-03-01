@@ -2,19 +2,26 @@
 
 {% block content %}
     <div class="container-fluid">
-        <div class="row bg-black justify-content-around">
+        <div class="row bg-black justify-content-around py-3">
             <div class="col-3">
+                {%  if result is defined %}
+                <img class="img-fluid mx-auto d-block" src="{{ result.album.cover_art_url }}" alt="Random Img">
+                {% else %}
                 <img class="img-fluid mx-auto d-block" src="https://picsum.photos/1000" alt="Random Img">
+                {% endif %}
             </div>
             <div class="col-7 d-flex flex-column justify-content-center">
                 <div class="text-white">
+                    {% if result is defined %}
+                        <h1>{{ result.title }}</h1>
+                        <h1>{{ result.primary_artist.name }}</h1>
+                        <h1>{{ result.album.name }}</h1>
+                        <h1>{{ result.release_date_for_display }}</h1>
+                    {% else %}
                     <h1>Song Name</h1>
                     <h1>Song Artist</h1>
-                    <h1>Year Released</h1>
-                    <br>
                     <h1>Genre</h1>
-                    <h1>Studio</h1>
-                    <h1>{{ song_ids }}</h1>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -28,28 +35,30 @@
                     <h3>Listen to Sample</h3>
                 </a>
             </div>
+            {% if result.media is defined %}
             <div class="col text-center">
-{#                <a class="stretched-link" href="#exampleModal" data-toggle="modal">Click Me</a>#}
                 <a class="text-decoration-none text-black" href="#MusicVideoModel" data-bs-toggle="modal" data-bs-target="#MusicVideoModel">
                     <h1><i class="bi bi-film"></i></h1>
                     <h3>Watch Music Video</h3>
                 </a>
-
             </div>
+            {% endif %}
         </div>
         <div id="MusicInfo">
+            {% if result is defined %}
+                Still need to implement
+            {% else %}
             {{ lipsum(5) }}
+            {% endif %}
         </div>
     </div>
-    <!-- Button trigger modal -->
 
 
-<!-- Modal -->
 <div class="modal fade" id="MusicVideoModel" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-xl">
     <div class="modal-content">
         <div class="ratio ratio-16x9">
-          <iframe src="https://www.youtube.com/embed/zpOULjyy-n8?rel=0" title="YouTube video" allowfullscreen></iframe>
+          <iframe src="https://www.youtube.com/embed/{{ result.youtube_id }}" title="YouTube video" allowfullscreen></iframe>
         </div>
 
     </div>
