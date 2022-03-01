@@ -3,7 +3,6 @@ import time
 import dotenv
 import requests
 from flask import Blueprint, request, render_template
-from server.creds.creds import app_name
 
 api_calls = Blueprint("api_calls", __name__, static_folder="../static", template_folder="../templates")
 

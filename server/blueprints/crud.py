@@ -5,7 +5,7 @@ import os
 import time
 import dotenv
 from flask import Blueprint, request
-from server.creds.creds import app_name
+from .creds import app_name
 
 crud = Blueprint("crud", __name__, static_folder="../static", template_folder="../templates")
 

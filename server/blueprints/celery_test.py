@@ -1,7 +1,7 @@
 import os
 import dotenv
 from flask import Blueprint, render_template
-from server.creds.creds import app_name
+from .creds import app_name
 
 dotenv.load_dotenv()
 
