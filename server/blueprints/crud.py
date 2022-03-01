@@ -5,14 +5,11 @@ import os
 import time
 import dotenv
 from flask import Blueprint, request
-from celery import Celery
+from server.creds.creds import app_name
 
 crud = Blueprint("crud", __name__, static_folder="../static", template_folder="../templates")
 
 dotenv.load_dotenv()
-
-app_name = Celery("task", broker=os.getenv("BROKER_URL"),
-                  backend="db+postgresql+psycopg2://" + os.getenv("DATABASE_URL"))
 
 
 def create_db():

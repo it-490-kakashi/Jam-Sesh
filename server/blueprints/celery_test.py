@@ -1,14 +1,11 @@
 import os
 import dotenv
 from flask import Blueprint, render_template
-from celery import Celery
+from server.creds.creds import app_name
 
 dotenv.load_dotenv()
 
 celery_test = Blueprint("celery_test", __name__, static_folder="../static", template_folder="../templates")
-
-app_name = Celery("task", broker=os.getenv("BROKER_URL"),
-                  backend="db+postgresql+psycopg2://" + os.getenv("DATABASE_URL"))
 
 
 # Celery Test Code

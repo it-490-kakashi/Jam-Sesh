@@ -3,14 +3,11 @@ import time
 import dotenv
 import requests
 from flask import Blueprint, request, render_template
-from celery import Celery
+from server.creds.creds import app_name
 
 api_calls = Blueprint("api_calls", __name__, static_folder="../static", template_folder="../templates")
 
 dotenv.load_dotenv()
-
-app_name = Celery("task", broker=os.getenv("BROKER_URL"),
-                  backend="db+postgresql+psycopg2://" + os.getenv("DATABASE_URL"))
 
 
 @api_calls.route('/search', methods=['GET', 'POST'])
