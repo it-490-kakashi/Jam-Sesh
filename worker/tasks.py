@@ -1,3 +1,4 @@
+import json
 import time
 import os
 from celery import Celery
@@ -42,7 +43,17 @@ def get_users():
         try:
             select = basic_user.select()
             result = conn.execute(select)
-            return result.fetchall()
+            users = {'result': []}
+            for row in result:
+                users['result'].append({
+                    'id': row[0],
+                    'first_name': row[1],
+                    'last_name': row[2],
+                    'email': row[3],
+                    'username': row[4],
+                    'password': row[5]
+                })
+            return users
         except exc.SQLAlchemyError as e:
             return "ERROR: " + str(e)
 
@@ -53,7 +64,16 @@ def get_user(user_id):
     with db.connect() as conn:
         try:
             select = basic_user.select().where(basic_user.c.id == user_id)
-            return conn.execute(select).fetchall()
+            row = conn.execute(select).fetchone()
+            user = {"result":[{
+                'id': row[0],
+                'first_name': row[1],
+                'last_name': row[2],
+                'email': row[3],
+                'username': row[4],
+                'password': row[5]
+            }]}
+            return user
         except exc.SQLAlchemyError as e:
             return "ERROR: " + str(e)
 
@@ -107,6 +127,7 @@ def users_found_by_first_and_last(firstname, lastname):
         if len(result.fetchall()) == 0:
             return False
     return True
+
 
 # Celery Test Code
 @app.task()
