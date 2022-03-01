@@ -15,7 +15,6 @@ app_name = Celery("task", broker=os.getenv("BROKER_URL"),
                   backend="db+postgresql+psycopg2://" + os.getenv("DATABASE_URL"))
 
 
-@crud.route("/create_db")
 def create_db():
     app_name.send_task("tasks.create_db")
 
@@ -43,10 +42,18 @@ def show_all_users():
     users_result = app_name.AsyncResult(users_task.id).result
     return str(users_result)
 
+@crud.route("/get_user")
+def show_user():
+    users_task = app_name.send_task("tasks.get_user", kwargs={"user_id": request.form['user_id']})
+    while str(app_name.AsyncResult(users_task.id).state) != "SUCCESS":
+        time.sleep(0.25)
+    users_result = app_name.AsyncResult(users_task.id).result
+    return str(users_result)
+
 
 @crud.route("/delete_user/<user_id>")
 def delete_user(user_id):
-    delete_task = app_name.send_task("tasks.delete_user", kwargs={"id": user_id})
+    delete_task = app_name.send_task("tasks.delete_user", kwargs={"user_id": user_id})
     delete_task_result = app_name.AsyncResult(delete_task.id).result
     return str(delete_task_result)
 
