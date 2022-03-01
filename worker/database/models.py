@@ -1,4 +1,4 @@
-from creds import db
+from .creds import db #DO NOT CHANGE!!
 from sqlalchemy import Table, Column, String, MetaData, Integer, Identity, ForeignKey
 
 # SQL Expression Language
