@@ -2,7 +2,7 @@ from flask import Flask, redirect, render_template, request
 import os
 import requests
 from dotenv import load_dotenv
-from blueprints.crud import crud
+from blueprints.crud import crud, create_db
 from blueprints.celery_test import celery_test
 from blueprints.api_calls import api_calls
 
@@ -15,8 +15,8 @@ app.register_blueprint(api_calls, url_prefix="")
 
 
 @app.before_first_request
-def create_db():
-    return redirect('/api/create_db')
+def make_db():
+    create_db()
 
 
 @app.route('/')
@@ -25,9 +25,6 @@ def hello_world():
         'title': 'Home Page'
     }
     return render_template('base.html', data=context)
-
-
-
 
 
 if __name__ == '__main__':
