@@ -16,26 +16,15 @@
             <thead>
                 <tr>
                     <th scope="col">Song Name</th>
-                    <th scope="col">Album</th>
                     <th scope="col">Artist Name</th>
-                    <th scope="col">Music Video</th>
-                    <th scope="col">Song Page</th>
                     <th scope="col">Sample</th>
                 </tr>
             </thead>
             <tbody>
                 {% for result in results %}
                     <tr>
-                        <td>{{ result.name }}</td>
-                        <td>{{ result.album }}</td>
+                        <td><a href="{{ result.song_profile }}">{{ result.name }}</a></td>
                         <td>{{ result.artist }}</td>
-                        <td>{% if result.music_video is defined %}
-                            <a href={{ result.music_video }}>Song Link</a>
-                            {% else %}
-                            None
-                            {% endif %}
-                        </td>
-                        <td><a href=`/song?spotify_id={{ result.spotify_id }}&audiodb_id={{ result.audiodb_id }}`>Song Profile</a></td>
                         <td class="text-center"><h3><i class="bi bi-play-fill"></i></h3></td>
                     </tr>
                 {% endfor %}
