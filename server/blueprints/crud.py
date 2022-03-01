@@ -52,6 +52,8 @@ def show_user():
 @crud.route("/delete_user/<user_id>")
 def delete_user(user_id):
     delete_task = app_name.send_task("tasks.delete_user", kwargs={"user_id": user_id})
+    while str(app_name.AsyncResult(delete_task.id).state) != "SUCCESS":
+        time.sleep(0.25)
     delete_task_result = app_name.AsyncResult(delete_task.id).result
     return str(delete_task_result)
 
