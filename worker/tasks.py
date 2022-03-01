@@ -15,8 +15,6 @@ app = Celery('task',
              backend='db+postgresql+psycopg2://' + os.getenv("DATABASE_URL"))
 
 
-
-
 @app.task()
 def create_db():
     meta.create_all()
@@ -48,6 +46,17 @@ def get_users():
             return "ERROR: " + str(e)
 
 
+# Read certain user
+@app.task()
+def get_user(user_id):
+    with db.connect() as conn:
+        try:
+            select = basic_user.select().where(basic_user.c.id == user_id)
+            return conn.execute(select).fetchall()
+        except exc.SQLAlchemyError as e:
+            return "ERROR: " + str(e)
+
+
 # Update
 @app.task()
 def update_user(user_id, first, last):
@@ -64,10 +73,13 @@ def update_user(user_id, first, last):
 def delete_user(user_id):
     with db.connect() as conn:
         try:
-            conn.execute(basic_user.select().where(basic_user.c.id == user_id))
+            user = basic_user.select().where(basic_user.c.id == user_id)
+            result = conn.execute(user)
+            if len(result.fetchall()) == 0:
+                return f"ERROR: User @ id:{user_id} is not found "
 
-            delete = basic_user.delete().where(basic_user.c.id == user_id)
-            conn.execute(delete)
+            conn.execute(basic_user.delete().where(basic_user.c.id == user_id))
+            return f"Deleted user @ id:{user_id}"
         except exc.NoResultFound:
             return "ERROR: " + str(exc.SQLAlchemyError)
 
