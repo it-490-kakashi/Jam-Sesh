@@ -16,12 +16,11 @@ app = Celery('task',
              backend='db+postgresql+psycopg2://' + os.getenv("DATABASE_URL"))
 
 
+# Creates tables
 @app.task()
 def create_db():
     meta.create_all()
 
-
-# TODO: REFRACTOR CODE TO FOLLOW ARTICLE https://www.askpython.com/python-modules/flask/flask-crud-application
 
 # Create
 @app.task()
@@ -47,7 +46,7 @@ def get_users():
             return "ERROR: " + str(e)
 
 
-# Read certain user
+# Read user @ id
 @app.task()
 def get_user(user_id):
     with db.connect() as conn:
@@ -58,7 +57,7 @@ def get_user(user_id):
             return "ERROR: " + str(e)
 
 
-# Update
+# Update first/last @ id
 @app.task()
 def update_user(user_id, first, last):
     with db.connect() as conn:
@@ -82,6 +81,7 @@ def delete_user(user_id):
         return f"ERROR: User @ id:{user_id} is not found"
 
 
+# Extra functions
 def user_found_by_id(user_id):
     with db.connect() as conn:
         user = basic_user.select().where(basic_user.c.id == user_id)
@@ -107,6 +107,7 @@ def users_found_by_first_and_last(firstname, lastname):
         if len(result.fetchall()) == 0:
             return False
     return True
+
 
 # Celery Test Code
 @app.task()
