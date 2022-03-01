@@ -63,17 +63,19 @@ def get_users():
 def get_user(user_id):
     with db.connect() as conn:
         try:
-            select = basic_user.select().where(basic_user.c.id == user_id)
-            row = conn.execute(select).fetchone()
-            user = {"result":[{
-                'id': row[0],
-                'first_name': row[1],
-                'last_name': row[2],
-                'email': row[3],
-                'username': row[4],
-                'password': row[5]
-            }]}
-            return user
+            if user_found_by_id(user_id):
+                select = basic_user.select().where(basic_user.c.id == user_id)
+                row = conn.execute(select).fetchone()
+                user = {"result":[{
+                    'id': row[0],
+                    'first_name': row[1],
+                    'last_name': row[2],
+                    'email': row[3],
+                    'username': row[4],
+                    'password': row[5]
+                }]}
+                return user
+            return f"ERROR: User not found"
         except exc.SQLAlchemyError as e:
             return "ERROR: " + str(e)
 
