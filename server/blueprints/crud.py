@@ -1,6 +1,7 @@
 """
   Crud Blueprint for flask
 """
+import json
 import os
 import time
 import dotenv
@@ -37,7 +38,7 @@ def show_all_users():
     while str(app_name.AsyncResult(users_task.id).state) != "SUCCESS":
         time.sleep(0.25)
     users_result = app_name.AsyncResult(users_task.id).result
-    return str(users_result)
+    return users_result
 
 
 @crud.route("/get_user")
@@ -46,7 +47,7 @@ def show_user():
     while str(app_name.AsyncResult(users_task.id).state) != "SUCCESS":
         time.sleep(0.25)
     users_result = app_name.AsyncResult(users_task.id).result
-    return str(users_result)
+    return users_result
 
 
 @crud.route("/delete_user/<user_id>")
