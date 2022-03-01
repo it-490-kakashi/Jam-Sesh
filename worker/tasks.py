@@ -3,7 +3,8 @@ import os
 from celery import Celery
 from celery.utils.log import get_task_logger
 from dotenv import load_dotenv
-from database import db, meta, basic_user, song_list, liked_songs
+from database.creds import db
+from database.models import meta, basic_user, song_list, liked_songs
 from sqlalchemy import exc
 
 load_dotenv()
@@ -83,6 +84,27 @@ def delete_user(user_id):
         except exc.NoResultFound:
             return "ERROR: " + str(exc.SQLAlchemyError)
 
+
+def user_found_by_id(user_id):
+    with db.connect() as conn:
+        user = basic_user.select().where(basic_user.c.id == user_id)
+        result = conn.execute(user)
+        if len(result.fetchall()) == 0:
+            return False
+        return True
+
+
+def user_found_by_username(username):
+    with db.connect() as conn:
+        user = basic_user.select().where(basic_user.c.username == username)
+        result = conn.execute(user)
+        if len(result.fetchall()) == 0:
+            return False
+        return True
+
+
+def users_found_by_first_and_last(firstname, lastname):
+    return True
 
 # Celery Test Code
 @app.task()

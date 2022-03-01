@@ -1,11 +1,5 @@
-import os
-from dotenv import load_dotenv
-from sqlalchemy import create_engine
+from .creds import db
 from sqlalchemy import Table, Column, String, MetaData, Integer, Identity, ForeignKey
-
-load_dotenv()
-
-db = create_engine("postgresql://" + os.getenv("DATABASE_URL"))
 
 # SQL Expression Language
 meta = MetaData(db)
