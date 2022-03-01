@@ -24,19 +24,15 @@ def search():
     if request.method == "POST":
         title = 'Search'
         results = []
-        spotify_results = request_song_info_spotify(request.form['search_info']).json()
-        for song in spotify_results['tracks']['items']:
-            song = song['data']
+        genius_results = request_song_info_genius(request.form['search_info']).json()
+        for song in genius_results['response']['hits']:
+            song = song['result']
             result = {
-                'spotify_id': song['id'],
-                'name': song['name'],
-                'album': song['albumOfTrack']['name'],
-                'artist': song['artists']['items'][0]['profile']['name'],
+                'song_id': song['id'],
+                'name': song['title'],
+                'artist': song['artist_names'],
             }
-            audiodb_result = request_song_info_audiodb(result['artist'], result['name']).json()
-            if audiodb_result['track'] is not None:
-                result['music_video'] = audiodb_result['track'][0]['strMusicVid']
-                result['audiodb_id']
+            result['song_profile'] = f"/song?id={result['song_id']}"
             results.append(result)
 
         #return context['results']
@@ -45,17 +41,16 @@ def search():
 
 @api_calls.route('/song', methods=['GET', 'POST'])
 def song_profile():
-    args = request.args
-    song_ids = ""
-    if "spotify_id" in args:
-        spotify_id = args["spotify_id"]
-        song_ids += f"{spotify_id}"
-    if "audiodb_id" in args:
-        audiodb_id = args["audiodb_id"]
-        song_ids += f" : {audiodb_id}"
-    title = "Song Name"
-    return render_template('song_profile.html', title=title, song_ids=song_ids)
+    title = "Song Profile Page"
+    if request.args is not None:
+        result = request_song_id_genius(request.args['id']).json()
+        result = result['response']['song']
+        title = result['full_title']
 
+    return render_template('song_profile.html', title=title, result=result)
+
+
+# API CALLS
 
 def request_song_info_genius(search_info):
     base_url = 'https://api.genius.com'
@@ -63,6 +58,19 @@ def request_song_info_genius(search_info):
     search_url = base_url + '/search'
     data = {'q': search_info}
     response = requests.get(search_url, data=data, headers=headers)
+
+    return response
+
+
+def request_song_id_genius(song_id):
+    url = "https://genius.p.rapidapi.com/songs/"+song_id
+
+    headers = {
+        'x-rapidapi-host': "genius.p.rapidapi.com",
+        'x-rapidapi-key': "e66edeed2emshe809355cbf14d21p15ef82jsnf921421de2fe"
+    }
+
+    response = requests.request("GET", url, headers=headers)
 
     return response
 
