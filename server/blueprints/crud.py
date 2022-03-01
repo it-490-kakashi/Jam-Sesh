@@ -42,6 +42,7 @@ def show_all_users():
     users_result = app_name.AsyncResult(users_task.id).result
     return str(users_result)
 
+
 @crud.route("/get_user")
 def show_user():
     users_task = app_name.send_task("tasks.get_user", kwargs={"user_id": request.form['user_id']})

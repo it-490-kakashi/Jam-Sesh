@@ -76,7 +76,7 @@ def delete_user(user_id):
             user = basic_user.select().where(basic_user.c.id == user_id)
             result = conn.execute(user)
             if len(result.fetchall()) == 0:
-                return f"ERROR: User @ id:{user_id} is not found "
+                return f"ERROR: User @ id:{user_id} is not found"
 
             conn.execute(basic_user.delete().where(basic_user.c.id == user_id))
             return f"Deleted user @ id:{user_id}"
