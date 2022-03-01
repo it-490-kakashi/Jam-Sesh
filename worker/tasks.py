@@ -63,8 +63,11 @@ def get_user(user_id):
 def update_user(user_id, first, last):
     with db.connect() as conn:
         try:
-            update = basic_user.update().where(basic_user.c.id == user_id).values(first=first, last=last)
-            conn.execute(update)
+            if user_found_by_id(user_id):
+                update = basic_user.update().where(basic_user.c.id == user_id).values(first=first, last=last)
+                conn.execute(update)
+                return f"User @ id:{user_id} was updated"
+            return f"ERROR: User @ id:{user_id} not found"
         except exc.SQLAlchemyError:
             return "ERROR: " + str(exc.SQLAlchemyError)
 
@@ -73,16 +76,10 @@ def update_user(user_id, first, last):
 @app.task()
 def delete_user(user_id):
     with db.connect() as conn:
-        try:
-            user = basic_user.select().where(basic_user.c.id == user_id)
-            result = conn.execute(user)
-            if len(result.fetchall()) == 0:
-                return f"ERROR: User @ id:{user_id} is not found"
-
+        if user_found_by_id(user_id):
             conn.execute(basic_user.delete().where(basic_user.c.id == user_id))
             return f"Deleted user @ id:{user_id}"
-        except exc.NoResultFound:
-            return "ERROR: " + str(exc.SQLAlchemyError)
+        return f"ERROR: User @ id:{user_id} is not found"
 
 
 def user_found_by_id(user_id):
@@ -104,6 +101,11 @@ def user_found_by_username(username):
 
 
 def users_found_by_first_and_last(firstname, lastname):
+    with db.connect() as conn:
+        user = basic_user.select().where(basic_user.c.first_name == firstname & basic_user.c.last_name == lastname)
+        result = conn.execute(user)
+        if len(result.fetchall()) == 0:
+            return False
     return True
 
 # Celery Test Code
