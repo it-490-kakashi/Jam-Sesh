@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 from database.models import meta
 import database.basic_crud as basic_crud
 import utilities.find_user as find_user
+import utilities.user_interactions as user_interactions
 
 load_dotenv()
 
@@ -25,37 +26,36 @@ def create_db():
 # Create
 @app.task()
 def add_user(first_name, last_name, email, username, password):
-    basic_crud.add_user(first_name, last_name, email, username, password)
+    return basic_crud.add_user(first_name, last_name, email, username, password)
 
 
 # Read
 @app.task()
 def get_users():
-    basic_crud.get_users()
+    return basic_crud.get_users()
 
 
 # Read user @ id
 @app.task()
 def get_user(user_id):
-    basic_crud.get_user(user_id)
+    return basic_crud.get_user(user_id)
 
 
 # Update first/last @ id
 @app.task()
 def update_user(user_id, first, last):
-    basic_crud.update_user(user_id, first, last)
+    return basic_crud.update_user(user_id, first, last)
 
 
 # Delete
 @app.task()
 def delete_user(user_id):
-    basic_crud.delete_user(user_id)
+    return basic_crud.delete_user(user_id)
 
 
 @app.task()
 def login(username, password):
-    #Code here
-    return ""
+    return user_interactions.login((username, password))
 
 
 @app.task()
