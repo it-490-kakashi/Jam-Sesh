@@ -13,8 +13,12 @@
   <div class="form-password">
     <label for="password">Password</label>
     <input type="password" name="password" class="form-control" id="password" placeholder="Password" required>
+    <small id="passwordHelp" class="form-text text-red visually-hidden" style="color:red;">Error:Password Doesn't Match</small>
+  </div>
+  <div class="form-password">
     <label for="confirm">Confirm Password</label>
     <input type="password" name="confirm" class="form-control" id="confirm" placeholder="Re-Enter Password" required>
+    <small id="confirmHelp" class="form-text visually-hidden" style="color:red;">Error: Password Doesn't Match</small>
   </div>
   <div class="form-redirect">
     Registered Already? <a href = "/login">Login</a>
