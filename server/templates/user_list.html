@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block content %}
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">User ID</th>
+          <th scope="col">First</th>
+          <th scope="col">Last</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for user in users.result %}
+        <tr>
+          <th scope="row">{{ user.id }}</th>
+          <td>{{ user.first_name }}</td>
+          <td>{{ user.last_name }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+{% endblock %}

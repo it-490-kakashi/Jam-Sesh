@@ -17,7 +17,7 @@
                 <tr>
                     <th scope="col">Song Name</th>
                     <th scope="col">Artist Name</th>
-                    <th scope="col">Sample</th>
+                    <th scope="col">Liked</th>
                 </tr>
             </thead>
             <tbody>
@@ -25,7 +25,11 @@
                     <tr>
                         <td><a href="{{ result.song_profile }}">{{ result.name }}</a></td>
                         <td>{{ result.artist }}</td>
-                        <td class="text-center"><h3><i class="bi bi-play-fill"></i></h3></td>
+                        {% if result.liked is true %}
+                        <td><h3><i class="bi bi-heart-fill"></i></h3></td>
+                        {% else %}
+                        <td><h3><i class="bi bi-heart"></i></h3></td>
+                        {% endif %}
                     </tr>
                 {% endfor %}
             </tbody>
