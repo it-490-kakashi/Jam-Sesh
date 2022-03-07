@@ -13,49 +13,49 @@
 </head>
 <body>
 
-    <nav class="navbar navbar-expand-lg navbar-light bg-light"> {# TODO: Implement active class toggle on specific page load #}
-      <div class="container-fluid">
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    {# TODO: Implement active class toggle on specific page load #}
+    <div class="container-fluid">
         <a class="navbar-brand" href="/">Jam-Sesh</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="/">Home</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/search">Search Songs</a>
-            </li>
-          </ul>
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="/">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/search">Search Songs</a>
+                </li>
+            </ul>
         </div>
-      </div>
-    </nav>
+    </div>
+</nav>
 
-    {% block content %}{% endblock %}
+{% block content %}{% endblock %}
 
-    <!-- Footer -->
-    <footer class="bg-light text-center ">
-      <!-- Grid container -->
-      <div class="container p-4">
-
-
+<!-- Footer -->
+<footer class="bg-light text-center ">
+    <!-- Grid container -->
+    <div class="container p-4">
 
 
-      </div>
-      <!-- Grid container -->
+    </div>
+    <!-- Grid container -->
 
-      <!-- Copyright -->
-      <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2)">
+    <!-- Copyright -->
+    <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2)">
         © 2020 Copyright:
         <a class="text-dark">Jam-Sesh</a>
-      </div>
-      <!-- Copyright -->
+    </div>
+    <!-- Copyright -->
 
-    </footer>
-    <!-- Footer -->
-    {#<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>#}
-    <script src="{{ url_for('static', filename='js/bootstrap/bootstrap.js') }}"></script>
-    {% block extra_js %}{% endblock %}
+</footer>
+<!-- Footer -->
+{#<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>#}
+<script src="{{ url_for('static', filename='js/bootstrap/bootstrap.js') }}"></script>
+{% block extra_js %}{% endblock %}
 </body>
 </html>

@@ -1,6 +1,7 @@
 from .creds import db #DO NOT CHANGE!!
 from sqlalchemy import Table, Column, String, MetaData, Integer, Identity, ForeignKey, Sequence
 
+
 # SQL Expression Language
 meta = MetaData(db)
 basic_user = Table('users', meta,

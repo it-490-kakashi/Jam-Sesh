@@ -4,9 +4,10 @@ import os
 from celery import Celery
 from celery.utils.log import get_task_logger
 from dotenv import load_dotenv
-from database.creds import db
-from database.models import meta, basic_user, song_list, liked_songs
-from sqlalchemy import exc
+from database.models import meta
+import database.basic_crud as basic_crud
+import utilities.find_user as find_user
+import utilities.user_interactions as user_interactions
 
 load_dotenv()
 
@@ -17,118 +18,61 @@ app = Celery('task',
              backend='db+postgresql+psycopg2://' + os.getenv("DATABASE_URL"))
 
 
+# Creates tables
 @app.task()
 def create_db():
     meta.create_all()
 
 
-# TODO: REFRACTOR CODE TO FOLLOW ARTICLE https://www.askpython.com/python-modules/flask/flask-crud-application
-
 # Create
 @app.task()
-def add_user(first, last):
-    with db.connect() as conn:
-        try:
-            new_user = basic_user.insert().values(first_name=first, last_name=last)
-            conn.execute(new_user)
-            return "User Added"
-        except exc.SQLAlchemyError:
-            return "ERROR: " + str(exc.SQLAlchemyError)
+def add_user(first_name, last_name, email, username, password):
+    return basic_crud.add_user(first_name, last_name, email, username, password)
 
 
 # Read
 @app.task()
 def get_users():
-    with db.connect() as conn:
-        try:
-            select = basic_user.select()
-            result = conn.execute(select)
-            users = {'result': []}
-            for row in result:
-                users['result'].append({
-                    'id': row[0],
-                    'first_name': row[1],
-                    'last_name': row[2],
-                    'email': row[3],
-                    'username': row[4],
-                    'password': row[5]
-                })
-            return users
-        except exc.SQLAlchemyError as e:
-            return "ERROR: " + str(e)
+    return basic_crud.get_users()
 
 
-# Read certain user
+# Read user @ id
 @app.task()
 def get_user(user_id):
-    with db.connect() as conn:
-        try:
-            if user_found_by_id(user_id):
-                select = basic_user.select().where(basic_user.c.id == user_id)
-                row = conn.execute(select).fetchone()
-                user = {"result":[{
-                    'id': row[0],
-                    'first_name': row[1],
-                    'last_name': row[2],
-                    'email': row[3],
-                    'username': row[4],
-                    'password': row[5]
-                }]}
-                return user
-            return f"ERROR: User not found"
-        except exc.SQLAlchemyError as e:
-            return "ERROR: " + str(e)
+    return basic_crud.get_user(user_id)
 
 
-# Update
+# Update first/last @ id
 @app.task()
 def update_user(user_id, first, last):
-    with db.connect() as conn:
-        try:
-            if user_found_by_id(user_id):
-                update = basic_user.update().where(basic_user.c.id == user_id).values(first=first, last=last)
-                conn.execute(update)
-                return f"User @ id:{user_id} was updated"
-            return f"ERROR: User @ id:{user_id} not found"
-        except exc.SQLAlchemyError:
-            return "ERROR: " + str(exc.SQLAlchemyError)
+    return basic_crud.update_user(user_id, first, last)
 
 
 # Delete
 @app.task()
 def delete_user(user_id):
-    with db.connect() as conn:
-        if user_found_by_id(user_id):
-            conn.execute(basic_user.delete().where(basic_user.c.id == user_id))
-            return f"Deleted user @ id:{user_id}"
-        return f"ERROR: User @ id:{user_id} is not found"
+    return basic_crud.delete_user(user_id)
 
 
-def user_found_by_id(user_id):
-    with db.connect() as conn:
-        user = basic_user.select().where(basic_user.c.id == user_id)
-        result = conn.execute(user)
-        if len(result.fetchall()) == 0:
-            return False
-        return True
+@app.task()
+def login(username, password):
+    return user_interactions.login((username, password))
 
 
-def user_found_by_username(username):
-    with db.connect() as conn:
-        user = basic_user.select().where(basic_user.c.username == username)
-        result = conn.execute(user)
-        if len(result.fetchall()) == 0:
-            return False
-        return True
+@app.task()
+def find_user_by(method, params):
+    if type(params) is not list or tuple:
+        return "ERROR: params is not a list or tuple"
 
+    if method == "id":
+        return find_user.by_id(params[0])
+    if method == "username":
+        return find_user.by_username(params[0])
+    if method == "first&last":
+        return find_user.by_first_and_last(params[0], params[1])
 
-def users_found_by_first_and_last(firstname, lastname):
-    with db.connect() as conn:
-        user = basic_user.select().where(basic_user.c.first_name == firstname & basic_user.c.last_name == lastname)
-        result = conn.execute(user)
-        if len(result.fetchall()) == 0:
-            return False
-    return True
+    return False
+
 
 
 # Celery Test Code
