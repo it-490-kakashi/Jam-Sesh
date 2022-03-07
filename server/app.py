@@ -2,7 +2,7 @@ from flask import Flask, redirect, render_template, request
 from dotenv import load_dotenv
 from blueprints.crud import crud, create_db
 from blueprints.celery_test import celery_test
-from blueprints.api_calls import api_calls
+from blueprints.song_search import song_search
 from blueprints.users import users
 
 load_dotenv()
@@ -10,7 +10,7 @@ load_dotenv()
 app = Flask(__name__)
 app.register_blueprint(crud, url_prefix='/api')
 app.register_blueprint(celery_test, url_prefix='/celery')
-app.register_blueprint(api_calls, url_prefix='')
+app.register_blueprint(song_search, url_prefix='')
 app.register_blueprint(users, url_prefix='')
 
 

@@ -4,12 +4,12 @@ import dotenv
 import requests
 from flask import Blueprint, request, render_template
 
-api_calls = Blueprint("api_calls", __name__, static_folder="../static", template_folder="../templates")
+song_search = Blueprint("song_search", __name__, static_folder="../static", template_folder="../templates")
 
 dotenv.load_dotenv()
 
 
-@api_calls.route('/search', methods=['GET', 'POST'])
+@song_search.route('/search', methods=['GET', 'POST'])
 def search():
     if request.method == "GET":
         context = {
@@ -35,7 +35,7 @@ def search():
         return render_template('search.html', title=title, results=results, placeholder=request.form['search_info'])
 
 
-@api_calls.route('/song', methods=['GET', 'POST'])
+@song_search.route('/song', methods=['GET', 'POST'])
 def song_profile():
     from urllib import parse
 
