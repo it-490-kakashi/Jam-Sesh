@@ -1,5 +1,5 @@
-from worker.database.creds import db
-from worker.database.models import basic_user
+from creds import db
+from models import basic_user
 
 
 def by_id(user_id):
