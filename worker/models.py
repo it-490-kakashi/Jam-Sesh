@@ -1,4 +1,4 @@
-from .creds import db #DO NOT CHANGE!!
+from creds import db
 from sqlalchemy import Table, Column, String, MetaData, Integer, Identity, ForeignKey, Sequence
 
 

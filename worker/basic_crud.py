@@ -1,10 +1,7 @@
-import sys
-sys.path.append("..")
-
 from sqlalchemy import exc
-from .creds import db
-from .models import basic_user
-import utilities.find_user as find_user
+from creds import db
+from models import basic_user
+import find_user as find_user
 
 
 # Create
