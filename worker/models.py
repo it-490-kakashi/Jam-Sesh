@@ -18,7 +18,7 @@ song_list = Table('songs', meta,
                   Column('name', String),
                   Column('artist', String),
                   Column('genre', String),
-                  Column('genius_id', String),
+                  Column('genius_id', Integer, primary_key=True, unique=True),
                   )
 
 liked_songs = Table('liked_songs', meta,

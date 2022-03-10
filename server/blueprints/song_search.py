@@ -57,12 +57,18 @@ def song_profile():
             result.update({"genre":"None"})
 
         title = result['full_title']
-        song_found = celery_link.send_task("tasks.find_song", kwargs={"name":songInfo['artist'],"artist":songInfo['title']})
+        song_found = celery_link.send_task("tasks.find_song", kwargs={"name":songInfo['title'],"artist":songInfo['artist']})
         while str(celery_link.AsyncResult(song_found.id).state) != "SUCCESS":
             time.sleep(0.25)
         song_found_result = celery_link.AsyncResult(song_found.id).result
         if not song_found_result:
             celery_link.send_task("tasks.add_song", kwargs={"name":songInfo['title'],"artist":songInfo['artist'],"genre":result['genre'],"genius_id":result['id']})
+        else:
+            song_liked = celery_link.send_task("tasks.get_liked_song", kwargs={"song_id": result['id'], "user_id": 1}) #TODO: Update user_id with dynamic user id
+            while str(celery_link.AsyncResult(song_liked.id).state) != "SUCCESS":
+                time.sleep(0.25)
+            song_liked = celery_link.AsyncResult(song_liked.id).result
+            result['liked'] = song_liked
     return render_template('song_profile.html', title=title, result=result)
 
 

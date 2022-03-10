@@ -3,6 +3,7 @@ from models import liked_songs, song_list
 import sqlalchemy as sql
 
 
+# Likes system
 def get_liked_songs(songs_list, user_id):
     with db.connect() as conn:
         results = {}
@@ -16,6 +17,23 @@ def get_liked_songs(songs_list, user_id):
         return results
 
 
+def get_liked_song(song_id, user_id):
+    with db.connect() as conn:
+        result = liked_songs.select().where(liked_songs.c.song_id == song_id, liked_songs.c.user_id == user_id)
+        result = conn.execute(result).fetchone()
+        return result is not None  # Returns True if there is a song
+
+
+def like_song(song_id, user_id):
+    with db.connect() as conn:
+        if not get_liked_song(song_id, user_id):
+            query = liked_songs.insert().values(song_id=song_id, user_id=user_id)
+            conn.execute(query)
+            return f"Added {song_id} for {user_id}"
+        return f"User already likes song @ id:{song_id}"
+
+
+# Song interactions
 def add_song(name, artist, genre, genius_id):
     with db.connect() as conn:
         insert = song_list.insert().values(
