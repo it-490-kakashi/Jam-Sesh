@@ -44,6 +44,7 @@ def song_profile():
     if request.args is not None:
         result = request_song_id_genius(request.args['id']).json()
         result = result['response']['song']
+        result['liked'] = False
         for media in result['media']:
             if media['provider'] == "youtube":
                 url = media['url']
