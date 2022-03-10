@@ -62,7 +62,7 @@ def song_profile():
             time.sleep(0.25)
         song_found_result = celery_link.AsyncResult(song_found.id).result
         if not song_found_result:
-            celery_link.send_task("tasks.add_song", kwargs={"name":songInfo['title'],"artist":songInfo['artist'],"genre":result['genre']})
+            celery_link.send_task("tasks.add_song", kwargs={"name":songInfo['title'],"artist":songInfo['artist'],"genre":result['genre'],"genius_id":result['id']})
     return render_template('song_profile.html', title=title, result=result)
 
 

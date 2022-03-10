@@ -16,12 +16,13 @@ def get_liked_songs(songs_list, user_id):
         return results
 
 
-def add_song(name, artist, genre):
+def add_song(name, artist, genre, genius_id):
     with db.connect() as conn:
         insert = song_list.insert().values(
             name=name,
             artist=artist,
-            genre=genre
+            genre=genre,
+            genius_id=genius_id
         )
         conn.execute(insert)
 

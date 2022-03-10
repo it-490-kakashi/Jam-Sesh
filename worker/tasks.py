@@ -82,8 +82,8 @@ def get_liked_songs(song_list, user_id):
 
 
 @app.task()
-def add_song(name, artist, genre):
-    return song_interactions.add_song(name, artist, genre)
+def add_song(name, artist, genre, genius_id):
+    return song_interactions.add_song(name, artist, genre, genius_id)
 
 
 @app.task()
