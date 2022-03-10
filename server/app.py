@@ -19,7 +19,7 @@ def make_db():
     create_db()
 
 
-@app.route('/base')
+@app.route('/')
 def hello_world():
     context = {
         'title': 'Home Page'

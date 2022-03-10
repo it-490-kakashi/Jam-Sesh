@@ -3,6 +3,7 @@ import time
 import dotenv
 import requests
 from flask import Blueprint, request, render_template
+from .creds import celery_link
 
 song_search = Blueprint("song_search", __name__, static_folder="../static", template_folder="../templates")
 
@@ -48,8 +49,20 @@ def song_profile():
                 url = media['url']
                 query_def = parse.parse_qs(parse.urlparse(url).query)['v'][0]
                 result['youtube_id'] = query_def
-        title = result['full_title']
+        songInfo = {"title":result['title'],"artist":result["primary_artist"]["name"]}
+        try:
+            audioDBRes = request_song_info_audiodb(songInfo['artist'],songInfo['title']).json()
+            result.update({"genre":audioDBRes['track'][0]['strGenre']})
+        except TypeError:
+            result.update({"genre":"None"})
 
+        title = result['full_title']
+        song_found = celery_link.send_task("tasks.find_song", kwargs={"name":songInfo['artist'],"artist":songInfo['title']})
+        while str(celery_link.AsyncResult(song_found.id).state) != "SUCCESS":
+            time.sleep(0.25)
+        song_found_result = celery_link.AsyncResult(song_found.id).result
+        if not song_found_result:
+            celery_link.send_task("tasks.add_song", kwargs={"name":songInfo['title'],"artist":songInfo['artist'],"genre":result['genre']})
     return render_template('song_profile.html', title=title, result=result)
 
 
