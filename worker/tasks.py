@@ -92,6 +92,11 @@ def like_song(genius_id, user_id):
 
 
 @app.task()
+def dislike_song(genius_id, user_id):
+    return song_interactions.dislike_song(genius_id, user_id)
+
+
+@app.task()
 def add_song(name, artist, genre, genius_id):
     return song_interactions.add_song(name, artist, genre, genius_id)
 

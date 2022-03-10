@@ -33,6 +33,14 @@ def like_song(song_id, user_id):
         return f"User already likes song @ id:{song_id}"
 
 
+def dislike_song(song_id, user_id):
+    with db.connect() as conn:
+        if get_liked_song(song_id, user_id):
+            conn.execute(liked_songs.delete().where(liked_songs.c.song_id == song_id, liked_songs.c.user_id == user_id))
+            return f"Disliked song @ id:{song_id} for user:{user_id}"
+        return "This user hasn't liked this song"
+
+
 # Song interactions
 def add_song(name, artist, genre, genius_id):
     with db.connect() as conn:
