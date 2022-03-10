@@ -52,9 +52,9 @@ def song_profile():
         songInfo = {"title":result['title'],"artist":result["primary_artist"]["name"]}
         try:
             audioDBRes = request_song_info_audiodb(songInfo['artist'],songInfo['title']).json()
-            result.update({"genre":audioDBRes['track'][0]['strGenre']})
+            result["genre"] = audioDBRes['track'][0]['strGenre']
         except TypeError:
-            result.update({"genre":"None"})
+            result["genre"] = "None"
 
         title = result['full_title']
         song_found = celery_link.send_task("tasks.find_song", kwargs={"name":songInfo['title'],"artist":songInfo['artist']})
