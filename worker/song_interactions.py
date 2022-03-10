@@ -5,10 +5,14 @@ import sqlalchemy as sql
 
 def get_liked_songs(songs_list, user_id):
     with db.connect() as conn:
-        results = []
+        results = {}
         for song in songs_list:
             result = liked_songs.select().where(liked_songs.c.song_id == song, liked_songs.c.user_id == user_id)
-            results.append(conn.execute(result).fetchone())
+            result = conn.execute(result).fetchone()
+            if result is not None:
+                results[song] = True
+            else:
+                results[song] = False
         return results
 
 
