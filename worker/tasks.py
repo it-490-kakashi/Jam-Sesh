@@ -1,10 +1,15 @@
+import json
 import time
 import os
 from celery import Celery
 from celery.utils.log import get_task_logger
+from celery.signals import worker_ready
 from dotenv import load_dotenv
-from sqlalchemy import create_engine, exc
-from sqlalchemy import Table, Column, String, MetaData, Integer, Identity
+from models import meta
+import basic_crud as basic_crud
+import find_user as find_user
+import user_interactions as user_interactions
+import song_interactions as song_interactions
 
 load_dotenv()
 
@@ -14,70 +19,91 @@ app = Celery('task',
              broker=os.getenv("BROKER_URL"),
              backend='db+postgresql+psycopg2://' + os.getenv("DATABASE_URL"))
 
-db = create_engine("postgresql://" + os.getenv("DATABASE_URL"))
 
-# SQL Expression Language
-meta = MetaData(db)
-basic_user = Table('users', meta,
-                   Column('id', Integer, Identity(start=1, cycle=True), primary_key=True),
-                   Column('first_name', String),
-                   Column('last_name', String)
-                   )
-
-
+# Creates tables
 @app.task()
 def create_db():
     meta.create_all()
 
 
-# TODO: REFRACTOR CODE TO FOLLOW ARTICLE https://www.askpython.com/python-modules/flask/flask-crud-application
-
 # Create
 @app.task()
-def add_user(first, last):
-    with db.connect() as conn:
-        try:
-            new_user = basic_user.insert().values(first_name=first, last_name=last)
-            conn.execute(new_user)
-            return "User Added"
-        except exc.SQLAlchemyError:
-            return "ERROR: " + str(exc.SQLAlchemyError)
+def add_user(first_name, last_name, email, username, password):
+    return basic_crud.add_user(first_name, last_name, email, username, password)
 
 
 # Read
 @app.task()
 def get_users():
-    with db.connect() as conn:
-        try:
-            select = basic_user.select()
-            result = conn.execute(select)
-            return result.fetchall()
-        except exc.SQLAlchemyError as e:
-            return "ERROR: " + str(e)
+    return basic_crud.get_users()
 
 
-# Update
+# Read user @ id
+@app.task()
+def get_user(user_id):
+    return basic_crud.get_user(user_id)
+
+
+# Update first/last @ id
 @app.task()
 def update_user(user_id, first, last):
-    with db.connect() as conn:
-        try:
-            update = basic_user.update().where(basic_user.c.id == user_id).values(first=first, last=last)
-            conn.execute(update)
-        except exc.SQLAlchemyError:
-            return "ERROR: " + str(exc.SQLAlchemyError)
+    return basic_crud.update_user(user_id, first, last)
 
 
 # Delete
 @app.task()
 def delete_user(user_id):
-    with db.connect() as conn:
-        try:
-            conn.execute(basic_user.select().where(basic_user.c.id == user_id))
+    return basic_crud.delete_user(user_id)
 
-            delete = basic_user.delete().where(basic_user.c.id == user_id)
-            conn.execute(delete)
-        except exc.NoResultFound:
-            return "ERROR: " + str(exc.SQLAlchemyError)
+
+@app.task()
+def login(username, password):
+    return user_interactions.login((username, password))
+
+
+@app.task()
+def find_user_by(method, params):
+    if type(params) is not list or tuple:
+        return "ERROR: params is not a list or tuple"
+
+    if method == "id":
+        return find_user.by_id(params[0])
+    if method == "username":
+        return find_user.by_username(params[0])
+    if method == "first&last":
+        return find_user.by_first_and_last(params[0], params[1])
+
+    return False
+
+
+@app.task()
+def get_liked_songs(song_list, user_id):
+    return song_interactions.get_liked_songs(song_list, user_id)
+
+
+@app.task()
+def get_liked_song(song_id, user_id):
+    return song_interactions.get_liked_song(song_id, user_id)
+
+
+@app.task()
+def like_song(genius_id, user_id):
+    return song_interactions.like_song(genius_id, user_id)
+
+
+@app.task()
+def dislike_song(genius_id, user_id):
+    return song_interactions.dislike_song(genius_id, user_id)
+
+
+@app.task()
+def add_song(name, artist, genre, genius_id):
+    return song_interactions.add_song(name, artist, genre, genius_id)
+
+
+@app.task()
+def find_song(name, artist):
+    return song_interactions.find_song(name, artist)
 
 
 # Celery Test Code

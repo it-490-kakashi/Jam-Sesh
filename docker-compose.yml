@@ -33,14 +33,20 @@ services:
   worker:
     container_name: rabbit-flask-worker
     build: './worker'
-    environment:
-      - PYTHONUNBUFFERED=1
+    env_file:
+      - ./worker/.env
+    volumes:
+    - ./worker:/worker
     depends_on:
       - server
 
   server:
     container_name: rabbit-flask-server
     build: './server'
+    volumes:
+    - ./server:/flask_app
+    env_file:
+      - ./server/.env
     ports:
     - 5000:5000
     depends_on:

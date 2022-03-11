@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="container mt-5" >
+        <form action="/search" method="post">
+            <div class="form-outline mb-4">
+                <label class="form-label visually-hidden" for="search">Search</label>
+                {% if placeholder is not defined %}
+                    <input type="text" name="search_info" id="search" class="form-control" placeholder="Search" />
+                {% else %}
+                    <input type="text" name="search_info" id="search" class="form-control" placeholder="Search" value="{{placeholder}}" />
+                {% endif %}
+            </div>
+        </form>
+    {% if results is defined  %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Song Name</th>
+                    <th scope="col">Artist Name</th>
+                    {#<th scope="col">Liked</th>#}
+                </tr>
+            </thead>
+            <tbody>
+                {% for result in results %}
+                    <tr>
+                        <td><a href="{{ result.song_profile }}">{{ result.name }}</a></td>
+                        <td>{{ result.artist }}</td>
+                        {#{% if result.liked is true %}
+                        <td><h3><i class="bi bi-heart-fill"></i></h3></td>
+                        {% else %}
+                        <td><h3><i class="bi bi-heart"></i></h3></td>
+                        {% endif %}#}
+                    </tr>
+                {% endfor %}
+            </tbody>
+
+
+        </table>
+    {% endif %}
+    </div>
+{% endblock %}
