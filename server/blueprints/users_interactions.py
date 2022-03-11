@@ -1,8 +1,8 @@
 import os
 import time
 import dotenv
-from flask import Blueprint, request, render_template
-from .creds import app_name
+from flask import Blueprint, request, render_template, redirect
+from .creds import celery_link
 
 users_interactions = Blueprint("users_interactions", __name__, static_folder="../static",
                                template_folder="../templates")
@@ -19,12 +19,12 @@ def index():
     if request.method == 'POST':
         username = request.form["username"]
         passwd = request.form["password"]
-        login_request = app_name.send_task("tasks.login", kwargs={'username': username, 'password': passwd})
+        login_request = celery_link.send_task("tasks.login", kwargs={'username': username, 'password': passwd})
         print("Sent Login Request")
-        while str(app_name.AsyncResult(login_request.id).state) != "SUCCESS":
+        while str(celery_link.AsyncResult(login_request.id).state) != "SUCCESS":
             time.sleep(0.25)
         print("Login Processed")
-        login_task_result = app_name.AsyncResult(login_request.id).result
+        login_task_result = celery_link.AsyncResult(login_request.id).result
         if login_task_result:
             return render_template('display.html', content="Login Successful")
         return render_template('login.html', title=title, message="ERROR: User not found")
@@ -41,11 +41,19 @@ def register():
         usr = request.form["username"]
         password = request.form["password"]
         confirm = request.form["confirm"]
-        app_name.send_task("tasks.add_user",
+        register_tasks = celery_link.send_task("tasks.register",
                            kwargs={'first_name': first,
                                    'last_name': last,
                                    'email': email,
                                    'username': usr,
                                    'password': password})
-        #TODO: Update page if email is in use
+
+        while str(celery_link.AsyncResult(register_tasks.id).state) != "SUCCESS":
+            time.sleep(0.25)
+        register_result = celery_link.AsyncResult(register_tasks.id).result
+        if register_result == True:
+            return redirect('/login')
+        else:
+            return render_template('register.html', content="Email already in use!", first=first, last=last, username=usr, password=password, confirm=confirm)
+
         return render_template('display.html', content=email, content2=usr, content3=password, content4=confirm)
