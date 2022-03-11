@@ -72,12 +72,3 @@ def update_user():
                                                     "last": request.form["last_name"]})
         update_task_result = celery_link.AsyncResult(update_task.id).result
         return str(update_task_result)
-
-
-@crud.route("/test_likes")
-def get_liked_songs():
-    get_songs_task = celery_link.send_task("tasks.get_liked_songs", kwargs={"song_list": [1, 3, 5], "user_id": 3})
-    while str(celery_link.AsyncResult(get_songs_task.id).state) != "SUCCESS":
-        time.sleep(0.25)
-    get_songs_result = celery_link.AsyncResult(get_songs_task.id).result
-    return get_songs_result
