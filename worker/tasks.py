@@ -1,15 +1,14 @@
-import json
 import time
 import os
 from celery import Celery
 from celery.utils.log import get_task_logger
-from celery.signals import worker_ready
 from dotenv import load_dotenv
 from models import meta
 import basic_crud as basic_crud
 import find_user as find_user
 import user_interactions as user_interactions
 import song_interactions as song_interactions
+import playlist_interactions as play_inter
 
 load_dotenv()
 
@@ -26,6 +25,7 @@ def create_db():
     meta.create_all()
 
 
+# User CRUD
 # Create
 @app.task()
 def add_user(first_name, last_name, email, username, password):
@@ -56,11 +56,13 @@ def delete_user(user_id):
     return basic_crud.delete_user(user_id)
 
 
+# Authentication
 @app.task()
 def login(username, password):
     return user_interactions.login((username, password))
 
 
+# User Methods
 @app.task()
 def find_user_by(method, params):
     if type(params) is not list or tuple:
@@ -76,6 +78,7 @@ def find_user_by(method, params):
     return False
 
 
+# Like system functions
 @app.task()
 def get_liked_songs(song_list, user_id):
     return song_interactions.get_liked_songs(song_list, user_id)
@@ -104,6 +107,43 @@ def add_song(name, artist, genre, genius_id):
 @app.task()
 def find_song(name, artist):
     return song_interactions.find_song(name, artist)
+
+
+# Playlist functions
+@app.task()
+def new_playlist(name, user_id):
+    return play_inter.new_playlist(name, user_id)
+
+
+@app.task()
+def get_user_playlists(user_id):
+    return play_inter.get_user_playlists(user_id)
+
+
+@app.task()
+def update_playlist_name(playlist_id, new_name):
+    return play_inter.update_playlist_name(playlist_id, new_name)
+
+
+@app.task()
+def delete_playlist(playlist_id):
+    return play_inter.delete_playlist(playlist_id)
+
+
+# Playlist content CRUD
+@app.task()
+def show_playlist_content(playlist_id):
+    return play_inter.show_playlist_content(playlist_id)
+
+
+@app.task()
+def add_song_to_playlist(song_id, playlist_id):
+    return play_inter.add_song_to_playlist(song_id, playlist_id)
+
+
+@app.task()
+def remove_song_from_playlist(song_id, playlist_id):
+    return play_inter.remove_song_from_playlist(song_id, playlist_id)
 
 
 # Celery Test Code
