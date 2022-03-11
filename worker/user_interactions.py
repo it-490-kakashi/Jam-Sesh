@@ -1,7 +1,7 @@
 from sqlalchemy import exc
 from creds import db
 from models import basic_user
-from find_user import by_username
+from find_user import by_username, by_email
 import secrets
 
 
@@ -18,10 +18,6 @@ def login(username, password):
 
                     }
                 }
-                # username_data = conn.execute(basic_user.select().where(basic_user.c.username == username).fetchall()
-                # password_data = conn.execute(basic_user.select().where(basic_user.c.password == password).fetchall()
-                # username_data = conn.execute("SELECT username FROM users WHERE username=:username").fetchall()
-                # password_data = conn.execute("SELECT password FROM users WHERE password=:password").fetchall()
 
                 users_data = basic_user.select().where(basic_user.c.username == username and basic_user.c.password == password)
                 result = conn.execute(users_data)
@@ -31,3 +27,17 @@ def login(username, password):
 
             else:
                 return "Error!"
+
+
+def register(username, firstname, lastname, email, password):
+    with db.connect() as conn:
+        if not by_email(email):
+            result_data = basic_user.insert().values(first_name=firstname,
+                                                     last_name=lastname,
+                                                     username=username,
+                                                     email=email,
+                                                     password=password,
+                                                     )
+            conn.execute(result_data)
+            return True
+        return False
