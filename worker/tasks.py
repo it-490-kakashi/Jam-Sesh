@@ -61,8 +61,8 @@ def login(username, password):
 
 
 @app.task()
-def register(username, firstname, lastname, email, password):
-    return user_interactions.register(username, firstname, lastname, email, password)
+def register(username, first_name, last_name, email, password):
+    return user_interactions.register(username, first_name, last_name, email, password)
 
 
 @app.task()

@@ -10,7 +10,6 @@ users_interactions = Blueprint("users_interactions", __name__, static_folder="..
 dotenv.load_dotenv()
 
 
-@users_interactions.route('/', methods=["GET", "POST"])
 @users_interactions.route('/login', methods=["GET", "POST"])
 def index():
     title = "login"
@@ -26,7 +25,7 @@ def index():
         print("Login Processed")
         login_task_result = celery_link.AsyncResult(login_request.id).result
         if login_task_result:
-            return render_template('display.html', content="Login Successful")
+            return render_template('base.html', content="Login Successful")  # Temporarily to home page but later account page
         return render_template('login.html', title=title, message="ERROR: User not found")
 
 
@@ -56,4 +55,4 @@ def register():
         else:
             return render_template('register.html', content="Email already in use!", first=first, last=last, username=usr, password=password, confirm=confirm)
 
-        return render_template('display.html', content=email, content2=usr, content3=password, content4=confirm)
+
