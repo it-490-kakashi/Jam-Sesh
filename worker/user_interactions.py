@@ -8,26 +8,9 @@ import secrets
 def login(username, password):
     with db.connect() as conn:
         if by_username(username):
-            user = basic_user.select().where(basic_user.c.username == username, basic_user.c.password == password)
-            results = conn.execute(user)
-            if len(results.fetchall()) == 1:
-                info = {
-                    "session_id": secrets.token_hex(5),  # Generated session id
-                    "user_info": {
-                        "username": username,
-                        "password": password
-
-                    }
-                }
-
-                # users_data = basic_user.select().where(basic_user.c.username == username, basic_user.c.password == password)
-                result = conn.execute(user)
-                if len(result.fetchall()) == 0:
-                    return False
-                return True
-
-            else:
-                return "Error!"
+            query = basic_user.select().where(basic_user.c.username == username, basic_user.c.password == password)
+            result = conn.execute(query).fetchone()
+            return result is not None  # Return true if result has content
 
 
 def register(username, firstname, lastname, email, password):

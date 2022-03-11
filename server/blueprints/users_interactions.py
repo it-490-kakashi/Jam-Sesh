@@ -25,8 +25,8 @@ def index():
         print("Login Processed")
         login_task_result = celery_link.AsyncResult(login_request.id).result
         if login_task_result:
-            return render_template('base.html', content="Login Successful")  # Temporarily to home page but later account page
-        return render_template('login.html', title=title, message="ERROR: User not found")
+            return redirect('/')  # Temporarily to home page but later account page
+        return render_template('login.html', title=title, message="ERROR: Credentials incorrect")
 
 
 @users_interactions.route('/register', methods=["GET", "POST"])
