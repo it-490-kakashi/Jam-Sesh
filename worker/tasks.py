@@ -57,7 +57,12 @@ def delete_user(user_id):
 
 @app.task()
 def login(username, password):
-    return user_interactions.login((username, password))
+    return user_interactions.login(username, password)
+
+
+@app.task()
+def register(username, firstname, lastname, email, password):
+    return user_interactions.register(username, firstname, lastname, email, password)
 
 
 @app.task()
