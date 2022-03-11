@@ -11,7 +11,7 @@ dotenv.load_dotenv()
 
 
 @users_interactions.route('/login', methods=["GET", "POST"])
-def index():
+def login():
     title = "login"
     if request.method == 'GET':
         return render_template('login.html')
@@ -55,4 +55,8 @@ def register():
         else:
             return render_template('register.html', content="Email already in use!", first=first, last=last, username=usr, password=password, confirm=confirm)
 
+
+@users_interactions.route('/account')
+def account_page():
+    return ""
 
