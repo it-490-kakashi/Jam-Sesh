@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+    <div>
+        <h1>Full Name</h1>
+        <h4>{{ account.first_name }} {{ account.last_name }}</h4>
+    </div>
+    <div>
+        <h1>Email</h1>
+        <h4>{{ account.email }}</h4>
+    </div>
+    <div>
+        <h1>Username</h1>
+        <h4>{{ account.username }}</h4>
+    </div>
+</div>
+{% endblock %}
