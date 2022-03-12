@@ -1,13 +1,13 @@
 <form action='/register' method="post">
   <div class="form-name">
       <label for="firstname">First Name</label>
-      <input type="text" name="first" class="form-control" id="firstname" placeholder="Enter firstname" required>
+      <input type="text" name="first" class="form-control" id="firstname" placeholder="Enter firstname" value="{{ first }}" required>
       <label for="lastname">Last Name</label>
-      <input type="text" name="last" class="form-control" id="lastname" placeholder="Enter lastname" required>
+      <input type="text" name="last" class="form-control" id="lastname" placeholder="Enter lastname" value="{{ last }}"required>
   </div>
     <div class="form-username">
     <label for="username">Username</label>
-    <input type="text" name="username" class="form-control" id="username" placeholder="Enter username" required>
+    <input type="text" name="username" class="form-control" id="username" placeholder="Enter username" value="{{ username }}"required>
   </div>
   <div class="form-email">
     <label for="email">Email</label>
@@ -15,12 +15,12 @@
   </div>
   <div class="form-password">
     <label for="password">Password</label>
-    <input type="password" name="password" class="form-control" id="password" placeholder="Password" required>
+    <input type="password" name="password" class="form-control" id="password" placeholder="Password" value="{{ password }}" required>
     <small id="passwordHelp" class="form-text text-red visually-hidden" style="color:red;">Error:Password Doesn't Match</small>
   </div>
   <div class="form-password">
     <label for="confirm">Confirm Password</label>
-    <input type="password" name="confirm" class="form-control" id="confirm" placeholder="Re-Enter Password" required>
+    <input type="password" name="confirm" class="form-control" id="confirm" placeholder="Re-Enter Password" value="{{ password }}" required>
     <small id="confirmHelp" class="form-text visually-hidden" style="color:red;">Error: Password Doesn't Match</small>
   </div>
   <div class="form-redirect">
