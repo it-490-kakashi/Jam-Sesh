@@ -66,6 +66,11 @@ def register(username, first_name, last_name, email, password):
 
 
 @app.task()
+def logout(session_token):
+    return user_interactions.logout(session_token)
+
+
+@app.task()
 def token_valid(session_token):
     return user_interactions.user_session_valid(session_token)
 

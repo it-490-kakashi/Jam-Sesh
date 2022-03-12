@@ -27,10 +27,14 @@ def login(username, password):
             return [user_found]  # Sending as array since front_end wont know if it's array or not
 
 
-def logout(username):
+def logout(session_token):
     with db.connect() as conn:
         # Write code
-        return ""
+        if user_session_valid(session_token):
+            query = logged_in_user.delete().where(logged_in_user.c.session_token == session_token)
+            conn.execute(query)
+            return True
+        return False
 
 
 def register(username, firstname, lastname, email, password):

@@ -60,6 +60,26 @@ def register():
             return render_template('register.html', content="Email already in use!", first=first, last=last, username=usr, password=password, confirm=confirm)
 
 
+@users_interactions.route('/logout')
+def logout():
+    # Get session token
+    session_token = request.cookies.get('session_token')
+    # if token set
+    if session_token is not None:
+        logout_task = celery_link.send_task('tasks.logout', kwargs={'session_token': session_token})
+        while str(celery_link.AsyncResult(logout_task.id).state) != "SUCCESS":
+            time.sleep(0.25)
+        register_result = celery_link.AsyncResult(logout_task.id).result
+        if register_result:
+            resp = make_response(redirect('/login'))
+            resp.set_cookie('session_token', '', expires=0)
+            return resp
+        # Log out user
+        # Redirect to home
+    return redirect('/login')
+    # redirect login
+
+
 @users_interactions.route('/account')
 def account_page():
     # Get session token
