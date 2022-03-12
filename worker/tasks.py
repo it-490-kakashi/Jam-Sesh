@@ -66,6 +66,16 @@ def register(username, first_name, last_name, email, password):
 
 
 @app.task()
+def token_valid(session_token):
+    return user_interactions.user_session_valid(session_token)
+
+
+@app.task()
+def user_info_from_session_token(session_token):
+    return user_interactions.user_info_from_session_token(session_token)
+
+
+@app.task()
 def find_user_by(method, params):
     if type(params) is not list or tuple:
         return "ERROR: params is not a list or tuple"
