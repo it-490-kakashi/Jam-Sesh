@@ -5,6 +5,8 @@ from blueprints.celery_test import celery_test
 from blueprints.song_search import song_search
 from blueprints.users import users
 from blueprints.users_interactions import users_interactions
+from blueprints.song_interaction import song_interaction
+
 
 load_dotenv()
 
@@ -14,6 +16,8 @@ app.register_blueprint(celery_test, url_prefix='/celery')
 app.register_blueprint(song_search, url_prefix='')
 app.register_blueprint(users, url_prefix='')
 app.register_blueprint(users_interactions)
+app.register_blueprint(song_interaction, url_prefix='')
+
 
 
 @app.before_first_request

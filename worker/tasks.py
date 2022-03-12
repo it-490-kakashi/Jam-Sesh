@@ -3,12 +3,13 @@ import time
 import os
 from celery import Celery
 from celery.utils.log import get_task_logger
+from celery.signals import worker_ready
 from dotenv import load_dotenv
 from models import meta
 import basic_crud as basic_crud
 import find_user as find_user
 import user_interactions as user_interactions
-import song_searches as song_search
+import song_interactions as song_interactions
 
 load_dotenv()
 
@@ -97,7 +98,32 @@ def find_user_by(method, params):
 
 @app.task()
 def get_liked_songs(song_list, user_id):
-    return song_search.get_liked_songs(song_list, user_id)
+    return song_interactions.get_liked_songs(song_list, user_id)
+
+
+@app.task()
+def get_liked_song(song_id, user_id):
+    return song_interactions.get_liked_song(song_id, user_id)
+
+
+@app.task()
+def like_song(genius_id, user_id):
+    return song_interactions.like_song(genius_id, user_id)
+
+
+@app.task()
+def dislike_song(genius_id, user_id):
+    return song_interactions.dislike_song(genius_id, user_id)
+
+
+@app.task()
+def add_song(name, artist, genre, genius_id):
+    return song_interactions.add_song(name, artist, genre, genius_id)
+
+
+@app.task()
+def find_song(name, artist):
+    return song_interactions.find_song(name, artist)
 
 
 # Celery Test Code

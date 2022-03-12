@@ -26,8 +26,11 @@ def add_test_user():
 
 @crud.route("/add_user")
 def add_user():
-    user_task = celery_link.send_task("tasks.add_user", kwargs={"first": request.form["first_name"],
-                                                             "last": request.form["last_name"]})
+    user_task = celery_link.send_task("tasks.add_user", kwargs={"first_name": request.form["first_name"],
+                                                                "last_name": request.form["last_name"],
+                                                                "email": request.form["email"],
+                                                                "username": request.form["username"],
+                                                                "password": request.form["password"]})
     return user_task.id
 
 
@@ -37,7 +40,7 @@ def show_all_users():
     while str(celery_link.AsyncResult(users_task.id).state) != "SUCCESS":
         time.sleep(0.25)
     users_result = celery_link.AsyncResult(users_task.id).result
-    return users_result
+    return str(users_result)
 
 
 @crud.route("/get_user")
@@ -66,6 +69,6 @@ def update_user():
     if request.method == "POST":
         update_task = celery_link.send_task("tasks.update_user",
                                             kwargs={"id": request.form["id"], "first": request.form["first_name"],
-                                                 "last": request.form["last_name"]})
+                                                    "last": request.form["last_name"]})
         update_task_result = celery_link.AsyncResult(update_task.id).result
         return str(update_task_result)

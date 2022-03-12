@@ -3,6 +3,7 @@ import time
 import dotenv
 import requests
 from flask import Blueprint, request, render_template
+from .creds import celery_link
 
 song_search = Blueprint("song_search", __name__, static_folder="../static", template_folder="../templates")
 
@@ -31,7 +32,7 @@ def search():
             result['song_profile'] = f"/song?id={result['song_id']}"
             results.append(result)
 
-        #return context['results']
+        # return context['results']
         return render_template('search.html', title=title, results=results, placeholder=request.form['search_info'])
 
 
@@ -43,13 +44,35 @@ def song_profile():
     if request.args is not None:
         result = request_song_id_genius(request.args['id']).json()
         result = result['response']['song']
+        result['liked'] = False
         for media in result['media']:
             if media['provider'] == "youtube":
                 url = media['url']
                 query_def = parse.parse_qs(parse.urlparse(url).query)['v'][0]
                 result['youtube_id'] = query_def
-        title = result['full_title']
+        songInfo = {"title": result['title'], "artist": result["primary_artist"]["name"]}
+        try:
+            audioDBRes = request_song_info_audiodb(songInfo['artist'], songInfo['title']).json()
+            result["genre"] = audioDBRes['track'][0]['strGenre']
+        except TypeError:
+            result["genre"] = "None"
 
+        title = result['full_title']
+        song_found = celery_link.send_task("tasks.find_song",
+                                           kwargs={"name": songInfo['title'], "artist": songInfo['artist']})
+        while str(celery_link.AsyncResult(song_found.id).state) != "SUCCESS":
+            time.sleep(0.25)
+        song_found_result = celery_link.AsyncResult(song_found.id).result
+        if not song_found_result:
+            celery_link.send_task("tasks.add_song", kwargs={"name": songInfo['title'], "artist": songInfo['artist'],
+                                                            "genre": result['genre'], "genius_id": result['id']})
+        else:
+            song_liked = celery_link.send_task("tasks.get_liked_song", kwargs={"song_id": result['id'],
+                                                                               "user_id": 1})  # TODO: Update user_id with dynamic user id
+            while str(celery_link.AsyncResult(song_liked.id).state) != "SUCCESS":
+                time.sleep(0.25)
+            song_liked = celery_link.AsyncResult(song_liked.id).result
+            result['liked'] = song_liked
     return render_template('song_profile.html', title=title, result=result)
 
 
@@ -66,7 +89,7 @@ def request_song_info_genius(search_info):
 
 
 def request_song_id_genius(song_id):
-    url = "https://genius.p.rapidapi.com/songs/"+song_id
+    url = "https://genius.p.rapidapi.com/songs/" + song_id
 
     headers = {
         'x-rapidapi-host': "genius.p.rapidapi.com",
@@ -81,7 +104,7 @@ def request_song_id_genius(song_id):
 def request_song_info_spotify(search_info):
     url = "https://spotify23.p.rapidapi.com/search/"
 
-    querystring = {"q": search_info, "type": "tracks" , "limit":15}
+    querystring = {"q": search_info, "type": "tracks", "limit": 15}
 
     headers = {
         'x-rapidapi-host': "spotify23.p.rapidapi.com",
@@ -119,6 +142,6 @@ def request_song_by_id_spotify(song_id):
         'x-rapidapi-key': "e66edeed2emshe809355cbf14d21p15ef82jsnf921421de2fe"
     }
 
-    response = requests.get( url, headers=headers, params=querystring)
+    response = requests.get(url, headers=headers, params=querystring)
 
     return response

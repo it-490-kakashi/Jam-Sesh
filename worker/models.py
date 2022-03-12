@@ -24,11 +24,12 @@ song_list = Table('songs', meta,
                   Column('id', Integer, Identity('song_id_seq', start=1, increment=1), primary_key=True),
                   Column('name', String),
                   Column('artist', String),
-                  Column('genre', String)
+                  Column('genre', String),
+                  Column('genius_id', Integer, primary_key=True, unique=True),
                   )
 
 liked_songs = Table('liked_songs', meta,
                     Column('id', Integer, Identity('liked_song_id_seq', start=1, increment=1), primary_key=True),
-                    Column('song_id', None, ForeignKey('songs.id')),
+                    Column('song_id', None, ForeignKey('songs.genius_id')),
                     Column('user_id', None, ForeignKey('users.id'))
                     )
