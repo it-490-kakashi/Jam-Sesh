@@ -13,7 +13,7 @@ dotenv.load_dotenv()
 @users_interactions.route('/login', methods=["GET", "POST"])
 def login():
     title = "login"
-    if request.cookies.get('session_token') is None:
+    if token_valid() is False:
         if request.method == 'GET':
             return render_template('login.html')
         if request.method == 'POST':
@@ -30,34 +30,36 @@ def login():
                     return resp
                 return redirect('/account')
             return render_template('login.html', title=title, message="ERROR: Credentials incorrect")
-    return  redirect('/account')
+    return redirect('/account')
 
 
 @users_interactions.route('/register', methods=["GET", "POST"])
 def register():
-    if request.method == 'GET':
-        return render_template('register.html')
-    if request.method == 'POST':
-        first = request.form["first"]
-        last = request.form["last"]
-        email = request.form["email"]
-        usr = request.form["username"]
-        password = request.form["password"]
-        confirm = request.form["confirm"]
-        register_tasks = celery_link.send_task("tasks.register",
-                           kwargs={'first_name': first,
-                                   'last_name': last,
-                                   'email': email,
-                                   'username': usr,
-                                   'password': password})
+    if not token_valid():
+        if request.method == 'GET':
+            return render_template('register.html')
+        if request.method == 'POST':
+            first = request.form["first"]
+            last = request.form["last"]
+            email = request.form["email"]
+            usr = request.form["username"]
+            password = request.form["password"]
+            confirm = request.form["confirm"]
+            register_tasks = celery_link.send_task("tasks.register",
+                               kwargs={'first_name': first,
+                                       'last_name': last,
+                                       'email': email,
+                                       'username': usr,
+                                       'password': password})
 
-        while str(celery_link.AsyncResult(register_tasks.id).state) != "SUCCESS":
-            time.sleep(0.25)
-        register_result = celery_link.AsyncResult(register_tasks.id).result
-        if register_result:
-            return redirect('/login')
-        else:
-            return render_template('register.html', content="Email already in use!", first=first, last=last, username=usr, password=password, confirm=confirm)
+            while str(celery_link.AsyncResult(register_tasks.id).state) != "SUCCESS":
+                time.sleep(0.25)
+            register_result = celery_link.AsyncResult(register_tasks.id).result
+            if register_result:
+                return redirect('/login')
+            else:
+                return render_template('register.html', message="Email already in use!", first=first, last=last, username=usr, password=password, confirm=confirm)
+    return redirect('/account')
 
 
 @users_interactions.route('/logout')
@@ -65,7 +67,7 @@ def logout():
     # Get session token
     session_token = request.cookies.get('session_token')
     # if token set
-    if session_token is not None:
+    if token_valid():
         logout_task = celery_link.send_task('tasks.logout', kwargs={'session_token': session_token})
         while str(celery_link.AsyncResult(logout_task.id).state) != "SUCCESS":
             time.sleep(0.25)
@@ -84,7 +86,7 @@ def logout():
 def account_page():
     # Get session token
     session_token = request.cookies.get('session_token')
-    if session_token is None:
+    if not token_valid():
         return redirect('/login')
     session_valid = celery_link.send_task('tasks.token_valid', kwargs={'session_token':session_token})
     while str(celery_link.AsyncResult(session_valid.id).state) != "SUCCESS":
@@ -108,4 +110,13 @@ def account_page():
         return render_template('account_profile.html', account=account_info)
     return redirect('/login')
 
+
+def token_valid():
+    session_token = request.cookies.get('session_token')
+    if session_token is not None:
+        session_valid_task = celery_link.send_task('tasks.token_valid', kwargs={'session_token':session_token})
+        while str(celery_link.AsyncResult(session_valid_task.id).state) != "SUCCESS":
+            time.sleep(0.25)
+        return celery_link.AsyncResult(session_valid_task.id).result
+    return False
 
