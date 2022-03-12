@@ -13,11 +13,14 @@ def by_id(user_id):
 
 def by_username(username):
     with db.connect() as conn:
-        user = basic_user.select().where(basic_user.c.username == username)
-        result = conn.execute(user)
-        if len(result.fetchall()) == 0:
-            return False
-        return True
+        query = basic_user.select().where(basic_user.c.username == username)
+        return conn.execute(query).fetchone() is not None  # Returns true if email found
+
+
+def by_email(email):
+    with db.connect() as conn:
+        query = basic_user.select().where(basic_user.c.email == email)
+        return conn.execute(query).fetchone() is not None  # Returns true if email found
 
 
 def by_first_and_last(firstname, lastname):
