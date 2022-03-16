@@ -6,6 +6,7 @@ from blueprints.song_search import song_search
 from blueprints.users import users
 from blueprints.users_interactions import users_interactions
 from blueprints.song_interaction import song_interaction
+from blueprints.song_search import request_loadtopcharts_audiodb
 
 
 load_dotenv()
@@ -52,6 +53,22 @@ def hello_login():
         'title': 'Login Page'
     }
     return render_template('login.html', data=context)
+
+@app.route('/topcharts')
+def hello_topcharts():
+    context = {
+        'title': 'topcharts Page'
+    }
+    return render_template('topcharts.html', data=context)
+
+@app.route('/loadtopcharts')
+def hello_load_topcharts():
+    results = request_loadtopcharts_audiodb()
+    context = {
+        'title': 'loadtopcharts Page',
+        'results': results
+    }
+    return render_template('topcharts.html', data=context)
 
 
 if __name__ == '__main__':
