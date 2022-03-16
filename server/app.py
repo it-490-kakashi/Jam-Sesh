@@ -27,10 +27,31 @@ def make_db():
 
 @app.route('/')
 def hello_world():
+
+    title = 'Home Page'
+
+    return render_template('home.html', title=title)
+
+@app.route('/search')
+def hello_search():
     context = {
-        'title': 'Home Page'
+        'title': 'Search Page'
     }
-    return render_template('base.html', data=context)
+    return render_template('search.html', data=context)
+
+@app.route('/register')
+def hello_register():
+    context = {
+        'title': 'Register Page'
+    }
+    return render_template('register.html.html', data=context)
+
+@app.route('/login')
+def hello_login():
+    context = {
+        'title': 'Login Page'
+    }
+    return render_template('login.html', data=context)
 
 
 if __name__ == '__main__':
