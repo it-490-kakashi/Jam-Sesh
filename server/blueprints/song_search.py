@@ -127,19 +127,20 @@ def request_loadtopcharts_audiodb():
     response = requests.request("GET", url, headers=headers, params=querystring)
 
     return response
-# def request_song_info_audiodb(artist, track_name):
-#     url = "https://theaudiodb.p.rapidapi.com/searchtrack.php"
-#
-#     querystring = {"s": artist, "t": track_name}
-#
-#     headers = {
-#         'x-rapidapi-host': "theaudiodb.p.rapidapi.com",
-#         'x-rapidapi-key': "e66edeed2emshe809355cbf14d21p15ef82jsnf921421de2fe"
-#     }
-#
-#     response = requests.get(url, headers=headers, params=querystring)
-#
-#     return response
+
+def request_song_info_audiodb(artist, track_name):
+    url = "https://theaudiodb.p.rapidapi.com/searchtrack.php"
+
+    querystring = {"s": artist, "t": track_name}
+
+    headers = {
+        'x-rapidapi-host': "theaudiodb.p.rapidapi.com",
+        'x-rapidapi-key': "e66edeed2emshe809355cbf14d21p15ef82jsnf921421de2fe"
+    }
+
+    response = requests.get(url, headers=headers, params=querystring)
+
+    return response
 
 
 def request_song_by_id_spotify(song_id):
