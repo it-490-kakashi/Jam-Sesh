@@ -35,7 +35,7 @@ def get_user(user_id):
     with db.connect() as conn:
         try:
             select = basic_user.select().where(basic_user.c.id == user_id)
-            return conn.execute(select).fetchall()
+            return conn.execute(select).fetchone()
         except exc.SQLAlchemyError as e:
             return "ERROR: " + str(e)
 

@@ -59,7 +59,27 @@ def delete_user(user_id):
 # Authentication
 @app.task()
 def login(username, password):
-    return user_interactions.login((username, password))
+    return user_interactions.login(username, password)
+
+
+@app.task()
+def register(username, first_name, last_name, email, password):
+    return user_interactions.register(username, first_name, last_name, email, password)
+
+
+@app.task()
+def logout(session_token):
+    return user_interactions.logout(session_token)
+
+
+@app.task()
+def token_valid(session_token):
+    return user_interactions.user_session_valid(session_token)
+
+
+@app.task()
+def user_info_from_session_token(session_token):
+    return user_interactions.user_info_from_session_token(session_token)
 
 
 # User Methods
