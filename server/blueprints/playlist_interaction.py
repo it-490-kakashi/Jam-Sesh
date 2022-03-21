@@ -19,7 +19,7 @@ def create_playlist():
         if request.method == 'POST':
             name = request.form['playlist_name']
             token = request.cookies.get('session_token')
-            celery_link.send_task("tasks.new_playlist", name=name, token=token)
+            celery_link.send_task("tasks.new_playlist", kwargs={'name': name, 'token': token})
 
             return redirect('/account')
 
