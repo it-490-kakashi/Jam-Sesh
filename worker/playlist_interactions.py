@@ -27,17 +27,23 @@ def update_playlist_name(playlist_id, new_name):
         return f"Updated playlist:{playlist_id}"
 
 
-def delete_playlist(playlist_id):
+def delete_playlist(playlist_id, user_id):
     with db.connect() as conn:
-        if playlist_exists(playlist_id):
-            conn.execute(playlist.delete().where(playlist.c.playlist_id == playlist_id))
+        if user_owns_playlist(playlist_id, user_id):
+            conn.execute(playlist.delete().where(playlist.c.playlist_id == playlist_id, playlist.c.user_id == user_id))
             return f"Deleted Playlist @ id:{playlist_id}"
-        return f"ERROR: Playlist @ id:{playlist_id} not found"
+        return f"ERROR: Playlist @ id:{playlist_id} not found or not owned"
 
 
 def playlist_exists(playlist_id):
     with db.connect() as conn:
         query = playlist.select().where(playlist.c.playlist_id == playlist_id)
+        return conn.execute(query).fetchone() is not None  # Returns true if playlist is not None
+
+
+def user_owns_playlist(playlist_id, user_id):
+    with db.connect() as conn:
+        query = playlist.select().where(playlist.c.playlist_id == playlist_id, playlist.c.user_id == user_id)
         return conn.execute(query).fetchone() is not None  # Returns true if playlist is not None
 
 

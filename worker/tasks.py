@@ -131,13 +131,13 @@ def find_song(name, artist):
 
 # Playlist functions
 @app.task()
-def new_playlist(name, user_id):
-    return play_inter.new_playlist(name, user_id)
+def new_playlist(name, token):
+    return play_inter.new_playlist(name, user_interactions.user_info_from_session_token(token)[0])
 
 
 @app.task()
-def get_user_playlists(user_id):
-    return play_inter.get_user_playlists(user_id)
+def get_user_playlists(token):
+    return play_inter.get_user_playlists(user_interactions.user_info_from_session_token(token)[0])
 
 
 @app.task()
@@ -146,8 +146,8 @@ def update_playlist_name(playlist_id, new_name):
 
 
 @app.task()
-def delete_playlist(playlist_id):
-    return play_inter.delete_playlist(playlist_id)
+def delete_playlist(playlist_id, token):
+    return play_inter.delete_playlist(playlist_id, user_interactions.user_info_from_session_token(token)[0])
 
 
 # Playlist content CRUD
