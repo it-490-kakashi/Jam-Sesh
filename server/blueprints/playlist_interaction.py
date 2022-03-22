@@ -82,3 +82,8 @@ def playlist_add_song():
 
 
 # Delete
+@playlist_interaction.route('/delete/<int:id>')
+def playlist_delete(id):
+    celery_link.send_task('tasks.delete_playlist', kwargs={'token': request.cookies.get('session_token'),
+                                                           'playlist_id': id})
+    return redirect('/playlist')
