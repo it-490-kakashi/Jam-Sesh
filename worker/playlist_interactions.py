@@ -52,7 +52,12 @@ def user_owns_playlist(playlist_id, user_id):
 def show_playlist_content(playlist_id):
     with db.connect() as conn:
         query = playlist_content.select().where(playlist_content.c.playlist_id == playlist_id)
-        return conn.execute(query).fetchall()
+        result = conn.execute(query).fetchall()
+        lst = []
+        for song_id in result:
+            query = song_list.select().where(song_list.c.genius_id == song_id[1])
+            lst.append(conn.execute(query).fetchone())
+        return lst
 
 
 def add_song_to_playlist(song_id, playlist_id, user_id):
