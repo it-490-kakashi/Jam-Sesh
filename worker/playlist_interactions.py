@@ -37,13 +37,13 @@ def delete_playlist(playlist_id, user_id):
 
 def playlist_exists(playlist_id):
     with db.connect() as conn:
-        query = playlist.select().where(playlist.c.playlist_id == playlist_id)
+        query = playlist.select().where(playlist.c.id == playlist_id)
         return conn.execute(query).fetchone() is not None  # Returns true if playlist is not None
 
 
 def user_owns_playlist(playlist_id, user_id):
     with db.connect() as conn:
-        query = playlist.select().where(playlist.c.playlist_id == playlist_id, playlist.c.user_id == user_id)
+        query = playlist.select().where(playlist.c.id == playlist_id, playlist.c.user_id == user_id)
         return conn.execute(query).fetchone() is not None  # Returns true if playlist is not None
 
 
@@ -56,7 +56,7 @@ def show_playlist_content(playlist_id):
 
 def add_song_to_playlist(song_id, playlist_id, user_id):
     with db.connect() as conn:
-        if user_owns_playlist(user_id):
+        if user_owns_playlist(playlist_id, user_id):
             query = playlist_content.insert().values(playlist_id=playlist_id,
                                                      song_id=song_id)
             conn.execute(query)
