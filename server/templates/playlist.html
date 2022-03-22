@@ -17,6 +17,7 @@
                     <td><h3><a href="/playlist/{{ item.id }}" class="text-black text-decoration-none">{{ item.name }}</a></h3></td>
                     <td>
                         <div class="d-flex justify-content-end">
+                            <a href="/playlist/add" type="button" class="btn btn-primary me-3">Add song</a>
                             <button type="button" class="btn btn-danger" onClick="delete_playlist_modal('{{ item.id }}','{{ item.name }}')">Remove</button>
                         </div>
                     </td>
