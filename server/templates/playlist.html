@@ -38,7 +38,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" onClick="$('#delete-conformation-modal').modal('hide')">Close</button>
-            <a id="delete-playlist-id" href="playlist/delete/" class="btn btn-danger">Delete</a>
+            <a id="delete-playlist-id" href="" class="btn btn-danger">Delete</a>
           </div>
         </div>
       </div>
@@ -50,7 +50,7 @@
 <script>
     function delete_playlist_modal(id, name){
         $('#playlist-name').text(name)
-        $('#delete-playlist-id').attr('href', 'playlist/delete/'+id)
+        $('#delete-playlist-id').attr('href', '/playlist/delete/'+id)
         $('#delete-conformation-modal').modal('show')
     }
 </script>
