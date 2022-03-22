@@ -30,7 +30,7 @@ def update_playlist_name(playlist_id, new_name):
 def delete_playlist(playlist_id, user_id):
     with db.connect() as conn:
         if user_owns_playlist(playlist_id, user_id):
-            conn.execute(playlist.delete().where(playlist.c.playlist_id == playlist_id, playlist.c.user_id == user_id))
+            conn.execute(playlist.delete().where(playlist.c.id == playlist_id, playlist.c.user_id == user_id))
             return f"Deleted Playlist @ id:{playlist_id}"
         return f"ERROR: Playlist @ id:{playlist_id} not found or not owned"
 
