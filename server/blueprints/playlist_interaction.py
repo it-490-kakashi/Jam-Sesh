@@ -57,7 +57,7 @@ def show_playlist():
 @playlist_interaction.route('/<int:id>')
 def playlist_content(id):
     token = request.cookies.get('session_token')
-    playlist_content = celery_link.send_task('tasks.get_user_playlist', kwargs={'token': token, 'playlist_id': id})
+    playlist_content = celery_link.send_task('tasks.show_playlist_content', kwargs={'playlist_id': id})
     while str(celery_link.AsyncResult(playlist_content.id).state) != "SUCCESS":
         time.sleep(0.25)
     playlist_content = celery_link.AsyncResult(playlist_content.id).result
@@ -71,9 +71,14 @@ def playlist_add_song():
     token = request.cookies.get('session_token')
     if request.method == 'POST':
         playlist_id = request.form['playlist_id']
-        celery_link.send_task('tasks.add_song_to_playlist',
+        add_song = celery_link.send_task('tasks.add_song_to_playlist',
                               kwargs={'token': token, 'playlist_id': playlist_id,
                                       'song_id': request.form['song_id']})
+        while str(celery_link.AsyncResult(add_song.id).state) != "SUCCESS":
+            time.sleep(0.25)
+        add_song = celery_link.AsyncResult(add_song.id).result
+        if add_song is False:
+            return render_template('add_to_playlist.html', title="Add to Playlist", playlists=get_users_playlist(), message="Song ID not found")
         return redirect(f'/playlist/{playlist_id}')
 
     return render_template('add_to_playlist.html', title="Add to Playlist", playlists=get_users_playlist())
