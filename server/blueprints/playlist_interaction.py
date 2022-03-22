@@ -63,7 +63,7 @@ def playlist_content(id):
     playlist_content = celery_link.AsyncResult(playlist_content.id).result
     if len(playlist_content) == 0:
         redirect('/playlist')
-    return render_template('playlist_content.html', playlist=playlist_content, title="User Playlist")
+    return render_template('playlist_content.html', playlist=playlist_content, title="User Playlist", playlist_id=id)
 
 
 @playlist_interaction.route('/add', methods=['GET', 'POST'])
@@ -82,6 +82,15 @@ def playlist_add_song():
         return redirect(f'/playlist/{playlist_id}')
 
     return render_template('add_to_playlist.html', title="Add to Playlist", playlists=get_users_playlist())
+
+@playlist_interaction.route('/remove', methods=['POST'])
+def playlist_remove_song():
+    token = request.cookies.get('session_token')
+    song_id = request.form['song_id']
+    playlist_id = request.form['playlist_id']
+    celery_link.send_task('tasks.remove_song_from_playlist', kwargs={'song_id': song_id, 'playlist_id':playlist_id, 'token':token})
+
+    return redirect(f'/playlist/{playlist_id}')
 
 # Update
 
