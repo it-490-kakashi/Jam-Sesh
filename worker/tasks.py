@@ -157,8 +157,8 @@ def show_playlist_content(playlist_id):
 
 
 @app.task()
-def add_song_to_playlist(song_id, playlist_id):
-    return play_inter.add_song_to_playlist(song_id, playlist_id)
+def add_song_to_playlist(song_id, playlist_id, token):
+    return play_inter.add_song_to_playlist(song_id, playlist_id, user_interactions.user_info_from_session_token(token)[0])
 
 
 @app.task()
