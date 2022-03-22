@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="container mt-5" >
+        <form action="/topsongs" method="post">
+            <div class="form-outline mb-4">
+                <label class="form-label visually-hidden" for="genre">Select Genre</label>
+                <select id="genre" name="genre">
+                <option value="Pop-Rock">Pop-Rock</option>
+                <option value="Country">Country</option>
+                <option value="Indie">Indie</option>
+                    <option value="Rock">Rock</option>
+                    <option value="Pop">Pop</option>
+                    <option value="All" selected>All</option>
+                </select>
+                <input type = "submit" id = "submit" name = "submit" value = "submit" />
+            </div>
+        </form>
+        <h1>Top Songs by Genre</h1>
+    {% if results is defined  %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Track</th>
+                    <th scope="col">Album</th>
+                    <th scope="col">Artist</th>
+                    <th scope="col">Genre</th>
+                    <th scope="col">Total Plays</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                {% for result in results %}
+                    <tr>
+                        <td><h3>{{ result.strTrack }}</h3></td>
+                        <td><h3>{{ result.strAlbum }}</h3></td>
+                        <td><h3>{{ result.strArtist }}</h3></td>
+                        <td><h3>{{ result.strGenre }}</h3></td>
+                        <td><h3>{{ result.intTotalPlays }}</h3></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+
+
+        </table>
+    {% endif %}
+    </div>
+{% endblock %}
