@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="container mt-5">
+        <div class="row">
+            <a href="/playlist/create" class="btn btn-success">Create New Playlist</a>
+        </div>
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">Playlist Name</th>
+
+            </tr>
+            </thead>
+            <tbody>
+            {% for item in playlists %}
+                <tr>
+                    <td><h3><a href="/playlist/{{ item.id }}" class="text-black text-decoration-none">{{ item.name }}</a></h3></td>
+                    <td>
+                        <div class="d-flex justify-content-end">
+                            <button type="button" class="btn btn-danger">Remove</button>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
