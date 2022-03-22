@@ -162,8 +162,8 @@ def add_song_to_playlist(song_id, playlist_id, token):
 
 
 @app.task()
-def remove_song_from_playlist(song_id, playlist_id):
-    return play_inter.remove_song_from_playlist(song_id, playlist_id)
+def remove_song_from_playlist(song_id, playlist_id, token):
+    return play_inter.remove_song_from_playlist(song_id, playlist_id, user_interactions.user_info_from_session_token(token)[0])
 
 
 # Celery Test Code

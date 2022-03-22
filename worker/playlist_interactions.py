@@ -73,14 +73,14 @@ def add_song_to_playlist(song_id, playlist_id, user_id):
         return False
 
 
-def remove_song_from_playlist(song_id, playlist_id):
+def remove_song_from_playlist(song_id, playlist_id, user_id):
     with db.connect() as conn:
-        if is_song_in_playlist(song_id, playlist_id):
+        if is_song_in_playlist(song_id, playlist_id) & user_owns_playlist(playlist_id, user_id):
             query = playlist_content.delete().where(playlist_content.c.playlist_id == playlist_id,
                                                     playlist_content.c.song_id == song_id)
             conn.execute(query)
             return f"Delete song @ id:{song_id} from playlist @ id:{playlist_id}"
-        return f"Song @ id:{song_id} is not in playlist @ id:{playlist_id}"
+        return f"Song @ id:{song_id} is not in playlist @ id:{playlist_id} or playlist not owned by user"
 
 
 def is_song_in_playlist(song_id, playlist_id):
