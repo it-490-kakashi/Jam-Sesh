@@ -17,7 +17,7 @@
                     <td><h3><a href="/playlist/{{ item.id }}" class="text-black text-decoration-none">{{ item.name }}</a></h3></td>
                     <td>
                         <div class="d-flex justify-content-end">
-                            <button type="button" class="btn btn-danger">Remove</button>
+                            <button type="button" class="btn btn-danger" onClick="delete_playlist_modal('{{ item.id }}','{{ item.name }}')">Remove</button>
                         </div>
                     </td>
                 </tr>
@@ -25,4 +25,33 @@
             </tbody>
         </table>
     </div>
+    <div class="modal fade" id="delete-conformation-modal" tabindex="-1" role="dialog" aria-labelledby="delete-conformation-modal-label" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="delete-conformation-modal-label">Delete Playlist</h5>
+            <button type="button" class="btn-close" onClick="$('#delete-conformation-modal').modal('hide')">
+            </button>
+          </div>
+          <div class="modal-body">
+            Are you sure you want to delete '<strong><span id="playlist-name">...</span></strong>'?
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onClick="$('#delete-conformation-modal').modal('hide')">Close</button>
+            <a id="delete-playlist-id" href="playlist/delete/" class="btn btn-danger">Delete</a>
+          </div>
+        </div>
+      </div>
+    </div>
+{% endblock %}
+
+
+{% block extra_js %}
+<script>
+    function delete_playlist_modal(id, name){
+        $('#playlist-name').text(name)
+        $('#delete-playlist-id').attr('href', 'playlist/delete/'+id)
+        $('#delete-conformation-modal').modal('show')
+    }
+</script>
 {% endblock %}
