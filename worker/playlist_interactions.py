@@ -50,7 +50,7 @@ def user_owns_playlist(playlist_id, user_id):
 # Playlist content CRUD
 def show_playlist_content(playlist_id):
     with db.connect() as conn:
-        query = playlist_content.select.where(playlist_content.c.playlist_id == playlist_id)
+        query = playlist_content.select().where(playlist_content.c.playlist_id == playlist_id)
         return conn.execute(query).fetchall()
 
 
