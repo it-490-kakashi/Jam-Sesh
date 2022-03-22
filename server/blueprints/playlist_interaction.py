@@ -21,7 +21,7 @@ def create_playlist():
             token = request.cookies.get('session_token')
             celery_link.send_task("tasks.new_playlist", kwargs={'name': name, 'token': token})
 
-            return redirect('/account')
+            return redirect('/playlist')
 
         return render_template('create_playlist.html', title="Create Playlist")
     return redirect('/login')
