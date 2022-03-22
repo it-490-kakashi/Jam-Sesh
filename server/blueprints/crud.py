@@ -13,7 +13,13 @@ dotenv.load_dotenv()
 
 
 def create_db():
+
     celery_link.send_task("tasks.create_db")
+
+@crud.route("/add_test_news")
+def add_test_news():
+    news_task = celery_link.send_task("tasks.seed_if_empty")
+    return news_task.id
 
 
 @crud.route("/add_test_user")

@@ -5,11 +5,13 @@ from celery import Celery
 from celery.utils.log import get_task_logger
 from celery.signals import worker_ready
 from dotenv import load_dotenv
-from models import meta
+from models import create_all
 import basic_crud as basic_crud
 import find_user as find_user
 import user_interactions as user_interactions
 import song_interactions as song_interactions
+from databaseseed import has_news, seed_news
+from socialTasks import get_news_db
 
 load_dotenv()
 
@@ -23,7 +25,7 @@ app = Celery('task',
 # Creates tables
 @app.task()
 def create_db():
-    meta.create_all()
+    create_all()
 
 
 # Create
@@ -125,8 +127,25 @@ def add_song(name, artist, genre, genius_id):
 def find_song(name, artist):
     return song_interactions.find_song(name, artist)
 
+@app.task()
+def update_views(genius_id):
+    song_interactions.increaseView(genius_id)
+    # to-do call increase views
 
-# Celery Test Code
+@app.task()
+def get_views(genius_id):
+    return song_interactions.getView(genius_id)
+    # Celery Test Code
+
+@app.task()
+def seed_if_empty():
+    if not has_news():
+        seed_news()
+
+@app.task()
+def get_news():
+    return get_news_db()
+
 @app.task()
 def longtime_add(x, y):
     logger.info('Got Request - Starting work ')
