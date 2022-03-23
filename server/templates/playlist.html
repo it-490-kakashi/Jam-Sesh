@@ -14,7 +14,7 @@
             <tbody>
             {% for item in playlists %}
                 <tr>
-                    <td><h3><a href="/playlist/{{ item.id }}" class="text-black text-decoration-none">{{ item.name }}</a></h3></td>
+                    <td><h3><a href="/playlist/{{ item.id }}" class="text-black text-decoration-none">{{ item.name }}</a><i class="bi bi-pencil" onclick="update_playlist_modal('{{ item.id }}')"></i></h3></td>
                     <td>
                         <div class="d-flex justify-content-end">
                             <a href="/playlist/add" type="button" class="btn btn-primary me-3">Add song</a>
@@ -44,15 +44,43 @@
         </div>
       </div>
     </div>
+
+    <div class="modal fade" id="update-playlist-modal" tabindex="-1" role="dialog" aria-labelledby="update-playlist-modal-label" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="delete-conformation-modal-label">Update Playlist</h5>
+            <button type="button" class="btn-close" onClick="$('#update-playlist-modal').modal('hide')">
+            </button>
+          </div>
+            <form id="update-form" action="update" method="post">
+                <div class="modal-body">
+                    <input class="visually-hidden" type="text" name="playlist_id" id="playlist_id" value="">
+                    <label class="form-label" for="playlist_name">New Playlist Name:</label>
+                    <input class="form-control" type="text" id="playlist_name" name="playlist_name">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onClick="$('#update-playlist-modal').modal('hide')">Close</button>
+                    <button id="delete-playlist-id" type="submit" class="btn btn-warning">Update Playlist</button>
+                </div>
+            </form>
+        </div>
+      </div>
+    </div>
 {% endblock %}
 
 
 {% block extra_js %}
 <script>
     function delete_playlist_modal(id, name){
-        $('#playlist-name').text(name)
-        $('#delete-playlist-id').attr('href', '/playlist/delete/'+id)
-        $('#delete-conformation-modal').modal('show')
+        $('#playlist-name').text(name);
+        $('#delete-playlist-id').attr('href', '/playlist/delete/'+id);
+        $('#delete-conformation-modal').modal('show');
+    }
+
+    function update_playlist_modal(id){
+        $('#update-form').attr('action', 'update/'+id)
+        $('#update-playlist-modal').modal('show');
     }
 </script>
 {% endblock %}
