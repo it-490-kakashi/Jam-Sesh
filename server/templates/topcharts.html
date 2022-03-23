@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="container mt-5" >
+        <form action="/topcharts" method="post">
+            <div class="form-outline mb-4">
+                <label class="form-label visually-hidden" for="submit">Click top charts</label>
+                <input type = "submit" id = "submit" name = "submit" value = "submit" />
+            </div>
+        </form>
+        <h1>Most Loved Albums</h1>
+    {% if results is defined  %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Thumbnail</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Genre</th>
+                    <th scope="col">Artist</th>
+                    <th scope="col">Year</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                {% for result in results %}
+                    <tr>
+                        <td><img alt="Thumbnail" src="{{ result.strAlbumThumb }}" width=128 height=128></td>
+                        <td><h3>{{ result.strAlbum }}</h3></td>
+                        <td><h3>{{ result.strArtist }}</h3></td>
+                        <td><h3>{{ result.strGenre }}</h3></td>
+                        <td><h3>{{ result.intYearReleased }}</h3></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+
+
+        </table>
+    {% endif %}
+    </div>
+{% endblock %}
