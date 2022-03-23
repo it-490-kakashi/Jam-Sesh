@@ -21,11 +21,13 @@ def get_user_playlists(user_id):
         return conn.execute(user_playlists).fetchall()
 
 
-def update_playlist_name(playlist_id, new_name):
+def update_playlist_name(playlist_id, new_name, user_id):
     with db.connect() as conn:
-        update = playlist.update().where(playlist.c.playlist_id == playlist_id).values(playlist_name=new_name)
-        conn.execute(update)
-        return f"Updated playlist:{playlist_id}"
+        if user_owns_playlist(playlist_id, user_id):
+            update = playlist.update().where(playlist.c.id == playlist_id).values(playlist_name=new_name)
+            conn.execute(update)
+            return True
+        return False
 
 
 def delete_playlist(playlist_id, user_id):

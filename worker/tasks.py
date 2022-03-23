@@ -141,8 +141,8 @@ def get_user_playlists(token):
 
 
 @app.task()
-def update_playlist_name(playlist_id, new_name):
-    return play_inter.update_playlist_name(playlist_id, new_name)
+def update_playlist_name(token, playlist_id, new_name):
+    return play_inter.update_playlist_name(playlist_id, new_name, user_interactions.user_info_from_session_token(token)[0])
 
 
 @app.task()
