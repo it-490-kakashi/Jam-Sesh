@@ -6,6 +6,7 @@ from blueprints.song_search import song_search
 from blueprints.users import users
 from blueprints.users_interactions import users_interactions
 from blueprints.song_interaction import song_interaction
+from blueprints.playlist_interaction import playlist_interaction
 from blueprints.topchart import topten_charts
 from blueprints.topsong import top_songs
 from blueprints.creds import celery_link
@@ -20,6 +21,7 @@ app.register_blueprint(song_search, url_prefix='')
 app.register_blueprint(users, url_prefix='')
 app.register_blueprint(users_interactions)
 app.register_blueprint(song_interaction, url_prefix='')
+app.register_blueprint(playlist_interaction, url_prefix='/playlist')
 app.register_blueprint(topten_charts, url_prefix='')
 app.register_blueprint(top_songs, url_prefix='')
 
