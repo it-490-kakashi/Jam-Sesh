@@ -99,11 +99,11 @@ def request_song_info_genius(search_info):
 
 
 def request_song_id_genius(song_id):
-    url = "https://genius.p.rapidapi.com/songs/" + song_id
+    url = "https://genius-song-lyrics1.p.rapidapi.com/songs/" + song_id
 
     headers = {
-        'x-rapidapi-host': "genius.p.rapidapi.com",
-        'x-rapidapi-key': "e66edeed2emshe809355cbf14d21p15ef82jsnf921421de2fe"
+        "X-RapidAPI-Host": "genius-song-lyrics1.p.rapidapi.com",
+        "X-RapidAPI-Key": "e66edeed2emshe809355cbf14d21p15ef82jsnf921421de2fe"
     }
 
     response = requests.request("GET", url, headers=headers)
