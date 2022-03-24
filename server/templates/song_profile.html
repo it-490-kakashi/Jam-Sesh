@@ -20,6 +20,7 @@
                                 <h1>{{ result.album.name }}</h1>
                                 <h1>{{ result.release_date_for_display }}</h1>
                                 <h1>{{ result.genre }}</h1>
+                                <h1>Views:{{ result.views }}</h1>
 
                             </div>
                             <div class="col">
@@ -66,9 +67,6 @@
             {% endif %}
         </div>
     </div>
-    {% if result is defined %}
-    <div class="float:right"><h1>Views:{{ result.views }}</h1></div>
-    {% endif %}
     <div class="fixed-bottom d-flex justify-content-center mb-5">
         <div class="d-flex col-10 align-items-end">
             <iframe class="w-100 h-50" id="sampleMusic" src="" frameborder="0"></iframe>
