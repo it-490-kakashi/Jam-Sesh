@@ -60,7 +60,7 @@
         </div>
         <div id="MusicInfo">
             {% if result is defined %}
-                Still need to implement
+                {{ result.description_preview }}
             {% else %}
             {{ lipsum(5) }}
             {% endif %}
