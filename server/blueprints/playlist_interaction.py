@@ -72,13 +72,14 @@ def playlist_add_song():
     if request.method == 'POST':
         playlist_id = request.form['playlist_id']
         add_song = celery_link.send_task('tasks.add_song_to_playlist',
-                              kwargs={'token': token, 'playlist_id': playlist_id,
-                                      'song_id': request.form['song_id']})
+                                         kwargs={'token': token, 'playlist_id': playlist_id,
+                                                 'song_id': request.form['song_id']})
         while str(celery_link.AsyncResult(add_song.id).state) != "SUCCESS":
             time.sleep(0.25)
         add_song = celery_link.AsyncResult(add_song.id).result
         if add_song is False:
-            return render_template('add_to_playlist.html', title="Add to Playlist", playlists=get_users_playlist(), message="Song ID not found")
+            return render_template('add_to_playlist.html', title="Add to Playlist", playlists=get_users_playlist(),
+                                   message="Song ID not found")
         return redirect(f'/playlist/{playlist_id}')
 
     return render_template('add_to_playlist.html', title="Add to Playlist", playlists=get_users_playlist())
@@ -89,7 +90,8 @@ def playlist_remove_song():
     token = request.cookies.get('session_token')
     song_id = request.form['song_id']
     playlist_id = request.form['playlist_id']
-    celery_link.send_task('tasks.remove_song_from_playlist', kwargs={'song_id': song_id, 'playlist_id':playlist_id, 'token':token})
+    celery_link.send_task('tasks.remove_song_from_playlist',
+                          kwargs={'song_id': song_id, 'playlist_id': playlist_id, 'token': token})
 
     return redirect(f'/playlist/{playlist_id}')
 
@@ -99,8 +101,9 @@ def playlist_remove_song():
 def playlist_update_name(id):
     token = request.cookies.get('session_token')
     update_task = celery_link.send_task('tasks.update_playlist_name', kwargs={'token': token,
-                                                                'playlist_id': id,
-                                                                'new_name': request.form['playlist_name']})
+                                                                              'playlist_id': id,
+                                                                              'new_name': request.form[
+                                                                                  'playlist_name']})
     while str(celery_link.AsyncResult(update_task.id).state) != "SUCCESS":
         time.sleep(0.25)
     update_result = celery_link.AsyncResult(update_task.id).result
