@@ -49,12 +49,6 @@
     <div class="container mt-5">
 
         <div class="row row-cols-2 mb-3" id="MusicPlayers">
-            <div class="col text-center">
-                <a class="text-decoration-none text-black" href="">
-                    <h1><i class="bi bi-play-circle"></i></h1>
-                    <h3>Listen to Sample</h3>
-                </a>
-            </div>
             {% if result.media is defined %}
             <div class="col text-center">
                 <a class="text-decoration-none text-black" href="#MusicVideoModel" data-bs-toggle="modal" data-bs-target="#MusicVideoModel">
@@ -72,11 +66,16 @@
             {% endif %}
         </div>
     </div>
-{% if result is defined %}
+    {% if result is defined %}
     <div class="float:right"><h1>Views:{{ result.views }}</h1></div>
     {% endif %}
+    <div class="fixed-bottom d-flex justify-content-center mb-5">
+        <div class="d-flex col-10 align-items-end">
+            <iframe class="w-100 h-50" id="sampleMusic" src="" frameborder="0"></iframe>
+        </div>
+    </div>
 
-<div class="modal fade" id="MusicVideoModel" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="MusicVideoModel" tabindex="-1" aria-labelledby="MusicVideoModel" aria-hidden="true">
   <div class="modal-dialog modal-xl">
     <div class="modal-content">
         <div class="ratio ratio-16x9">
@@ -87,4 +86,13 @@
   </div>
 </div>
 
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $( document ).ready(function() {
+        $('#sampleMusic').attr('src','{{ result.apple_music_player_url }}');
+
+    });
+</script>
 {% endblock %}
