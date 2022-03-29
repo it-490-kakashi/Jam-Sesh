@@ -20,6 +20,7 @@
                                 <h1>{{ result.album.name }}</h1>
                                 <h1>{{ result.release_date_for_display }}</h1>
                                 <h1>{{ result.genre }}</h1>
+
                             </div>
                             <div class="col">
                                 <h1 class="text-end">
@@ -71,7 +72,9 @@
             {% endif %}
         </div>
     </div>
-
+{% if result is defined %}
+    <div class="float:right"><h1>Views:{{ result.views }}</h1></div>
+    {% endif %}
 
 <div class="modal fade" id="MusicVideoModel" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-xl">

@@ -40,6 +40,24 @@ def like_song(song_id, user_id):
         logging.warning('User already likes ' + song_id)
         return f"User already likes song @ id:{song_id}"
 
+def increaseView(genius_id):
+    with db.connect() as conn:
+        result = song_list.select().where(song_list.c.genius_id == genius_id)
+        result = conn.execute(result).fetchone()
+        if result is not None and result.views is not None:
+            query = song_list.update().where(song_list.c.genius_id == genius_id).values(views = result.views + 1)
+        else:
+            query = song_list.update().where(song_list.c.genius_id == genius_id).values(views = 1)
+        conn.execute(query)
+
+def getView(genius_id):
+    with db.connect() as conn:
+        result = song_list.select().where(song_list.c.genius_id == genius_id)
+        result = conn.execute(result).fetchone()
+        if result is not None:
+            return result.views
+        else:
+            return 0
 
 def dislike_song(song_id, user_id):
     with db.connect() as conn:

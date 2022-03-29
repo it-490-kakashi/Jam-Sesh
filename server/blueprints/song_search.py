@@ -73,6 +73,16 @@ def song_profile():
                 time.sleep(0.25)
             song_liked = celery_link.AsyncResult(song_liked.id).result
             result['liked'] = song_liked
+        update_views = celery_link.send_task("tasks.update_views", kwargs={"genius_id": result['id']})
+        while str(celery_link.AsyncResult(update_views.id).state) != "SUCCESS":
+            time.sleep(0.25)
+        count_views = celery_link.send_task("tasks.get_views", kwargs={"genius_id": result['id']})
+
+        while str(celery_link.AsyncResult(count_views.id).state) != "SUCCESS":
+            time.sleep(0.25)
+        count_views = celery_link.AsyncResult(count_views.id).result
+        result['views'] = count_views
+        # to-do call celery link, call celery to increase views
     return render_template('song_profile.html', title=title, result=result)
 
 

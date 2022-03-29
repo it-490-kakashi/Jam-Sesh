@@ -8,7 +8,8 @@ from blueprints.users_interactions import users_interactions
 from blueprints.song_interaction import song_interaction
 from blueprints.topchart import topten_charts
 from blueprints.topsong import top_songs
-
+from blueprints.creds import celery_link
+import time
 
 load_dotenv()
 
@@ -33,7 +34,13 @@ def hello_world():
 
     title = 'Home Page'
 
-    return render_template('home.html', title=title)
+    news_elements = celery_link.send_task("tasks.get_news")
+
+    while str(celery_link.AsyncResult(news_elements.id).state) != "SUCCESS":
+        time.sleep(0.05)
+    news_elements = celery_link.AsyncResult(news_elements.id).result
+
+    return render_template('home.html', title=title, news=news_elements)
 
 @app.route('/search')
 def hello_search():

@@ -26,6 +26,7 @@ song_list = Table('songs', meta,
                   Column('artist', String),
                   Column('genre', String),
                   Column('genius_id', Integer, primary_key=True, unique=True),
+                  Column('views', Integer)
                   )
 
 liked_songs = Table('liked_songs', meta,
@@ -33,3 +34,14 @@ liked_songs = Table('liked_songs', meta,
                     Column('song_id', None, ForeignKey('songs.genius_id')),
                     Column('user_id', None, ForeignKey('users.id'))
                     )
+
+news = Table('news_table', meta,
+             Column('id', Integer, Identity('news_id_seq', start=1, increment=1), primary_key=True),
+             Column('Title', String),
+             Column('Body', String),
+             Column('Author', String),
+             Column('Published', DateTime)
+             )
+
+def create_all():
+    meta.create_all()
