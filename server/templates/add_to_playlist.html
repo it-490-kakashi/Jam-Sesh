@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="container">
+        <h1 class="text-center">Add song to playlist</h1>
+        <form action="/playlist/add" method="post">
+            <div class="mb-3">
+                <label class="form-label" for="playlist_id">Playlist:</label>
+                <select class="form-control" name="playlist_id" id="playlist_id">
+                    {% for playlist in playlists %}
+                        <option value="{{ playlist.id }}">{{ playlist.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="song_id">Song ID:</label>
+                <input class="form-control" type="text" name="song_id" id="song_id">
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+    {% if message is defined %}
+        <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
+          <div class="toast-header">
+            <strong class="me-auto">ERROR</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+          </div>
+          <div class="toast-body">
+            {{ message }}
+          </div>
+        </div>
+    {% endif %}
+{% endblock %}

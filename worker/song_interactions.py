@@ -92,3 +92,10 @@ def find_song(name, artist):
         else:
             logging.error('No Song Matching Query')
             return False
+
+
+def find_song_by_id(song_id):
+    with db.connect() as conn:
+        query = song_list.select().where(song_list.c.genius_id == song_id)
+        result = conn.execute(query)
+        return len(result.fetchall()) > 0
