@@ -3,6 +3,9 @@ from creds import db
 from datetime import datetime, date
 import os
 import json
+import logging
+
+logging.basicConfig(filename='log_file.log', encoding='utf-8', format='%(levelname)s:%(message)s', level=logging.DEBUG)
 
 def json_serial(obj):
     """JSON serializer for objects not serializable by default json code"""
@@ -27,9 +30,13 @@ def create_dump():
             f.write(json.dumps(users_list))
             # print(users)
             print("jsonstring " + json.dumps(users_list))
+            logging.debug("jsonstring " + json.dumps(users_list))
             print("dump name is " + f.name)
+            logging.debug("dump name is " + f.name)
             f.close()
+            logging.debug("dump successful")
             return "dump successful"
+        logging.error("dump unsuccessful")
         return "dump unsuccessful"
 
 def retrieve_latest_dump():
@@ -47,6 +54,8 @@ def retrieve_latest_dump():
             print(latest_dump)
     if latest_dump != "":
         jsondata = json.load(open(latest_dump))
+        logging.debug(jsondata)
         return jsondata
     else:
+        logging.error("No Dump Detected")
         return None
