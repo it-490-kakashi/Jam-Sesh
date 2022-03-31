@@ -1,11 +1,13 @@
 """
   Crud Blueprint for flask
 """
+import json
 import os
 import time
 import dotenv
 from flask import Blueprint, request
 from .creds import celery_link
+import requests
 
 crud = Blueprint("crud", __name__, static_folder="../static", template_folder="../templates")
 
@@ -26,10 +28,27 @@ def add_test_news():
 
 @crud.route("/add_test_user")
 def add_test_user():
-    first_name = "John"
-    last_name = "Doe"
-    user_task = celery_link.send_task("tasks.add_user", kwargs={"first": first_name, "last": last_name})
-    return user_task.id
+    url = "https://my.api.mockaroo.com/it490___users.json"
+
+    payload = {}
+    headers = {
+        'X-API-Key': '3f00bd30',
+        'Content-Type': 'application/json',
+        'Cookie': 'layer0_bucket=14; layer0_destination=default; layer0_environment_id_info=1680b086-a116-4dc7-a17d-9e6fdbb9f6d9'
+    }
+
+    response = requests.request("GET", url, headers=headers, data=payload)
+    test_users = json.loads(response.text)
+
+    user_task_ids = []
+    for user in test_users:
+        user_task = celery_link.send_task("tasks.add_user", kwargs={"first_name":user['first_name'],
+                                                                    "last_name": user['last_name'],
+                                                                    "email": user['email'],
+                                                                    "username": user['username'],
+                                                                    "password": user['password']})
+        user_task_ids.append(user_task.id)
+    return str(user_task_ids)
 
 
 @crud.route("/add_user")
