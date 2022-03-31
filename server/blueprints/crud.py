@@ -14,7 +14,9 @@ dotenv.load_dotenv()
 
 def create_db():
 
-    celery_link.send_task("tasks.create_db")
+    databasestatus = celery_link.send_task("tasks.create_db")
+    while str(celery_link.AsyncResult(databasestatus.id).state) != "SUCCESS":
+        time.sleep(0.1)
 
 @crud.route("/add_test_news")
 def add_test_news():
