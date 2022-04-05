@@ -5,9 +5,6 @@ from find_user import by_username, by_email
 from basic_crud import get_user
 import secrets
 from datetime import datetime, timedelta
-import logging
-
-logging.basicConfig(filename='log_file.log', encoding='utf-8', format='%(levelname)s:%(message)s', level=logging.DEBUG)
 
 
 def login(username, password):
@@ -25,8 +22,7 @@ def login(username, password):
                 user_id = conn.execute(user_id).fetchone()[0]
 
                 session_token = user_session_token(user_id)
-                logging.debug('User is found')
-                logging.debug('Successful Login')
+
                 return [user_found, session_token]
             return [user_found]  # Sending as array since front_end wont know if it's array or not
 
@@ -37,7 +33,7 @@ def logout(session_token):
         if user_session_valid(session_token):
             query = logged_in_user.delete().where(logged_in_user.c.session_token == session_token)
             conn.execute(query)
-            logging.debug('Successful Logout')
+
             return True
         return False
 
@@ -52,7 +48,7 @@ def register(username, firstname, lastname, email, password):
                                                      password=password,
                                                      )
             conn.execute(result_data)
-            logging.debug('Successfully Registered User')
+
             return True
         return False
 
@@ -67,7 +63,7 @@ def user_session_token(user_id):
                                                        session_token=session_token,
                                                        token_expiry=datetime.now() + timedelta(days=30))
             conn.execute(add_login)
-            logging.debug('Session Token Generated')
+
             return session_token
         return conn.execute(query).fetchone()[1]
 
@@ -75,7 +71,7 @@ def user_session_token(user_id):
 def user_session_valid(session_token):
     with db.connect() as conn:
         query = logged_in_user.select().where(logged_in_user.c.session_token == session_token)
-        logging.debug('Session Token Valid')
+
         return conn.execute(query).fetchone() is not None
 
 
@@ -85,7 +81,7 @@ def user_info_from_session_token(session_token):
         result = conn.execute(query).fetchone()
         if result is not None:
             user_id = result[0]
-            logging.debug('User ID Retrieved')
+
             return get_user(user_id)
-        logging.error('No User Detected')
+
         return None
