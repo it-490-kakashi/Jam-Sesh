@@ -4,10 +4,11 @@ import dotenv
 from flask import Blueprint, request, render_template, redirect, make_response
 from .creds import celery_link
 
-users_interactions = Blueprint("users_interactions", __name__, static_folder="../static",
-                               template_folder="../templates")
-
 dotenv.load_dotenv()
+
+users_interactions = Blueprint("users_interactions", __name__, static_folder=os.getenv("CURR_PATH")+"\static",
+                               template_folder=os.getenv("CURR_PATH")+"\templates")
+
 
 
 @users_interactions.route('/login', methods=["GET", "POST"])

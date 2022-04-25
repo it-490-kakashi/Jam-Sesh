@@ -9,9 +9,10 @@ from flask import Blueprint, request
 from .creds import celery_link
 import requests
 
-crud = Blueprint("crud", __name__, static_folder="../static", template_folder="../templates")
-
 dotenv.load_dotenv()
+
+crud = Blueprint("crud", __name__, static_folder=os.getenv("CURR_PATH")+"/static", template_folder=os.getenv("CURR_PATH")+"/templates")
+
 
 
 def create_db():

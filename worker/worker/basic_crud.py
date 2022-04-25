@@ -1,7 +1,7 @@
 from sqlalchemy import exc
 from creds import db
 from models import basic_user
-import find_user as find_user
+from find_user import *
 
 
 
@@ -51,7 +51,7 @@ def get_user(user_id):
 def update_user(user_id, first, last):
     with db.connect() as conn:
         try:
-            if find_user.by_id(user_id):
+            if by_id(user_id):
                 update = basic_user.update().where(basic_user.c.id == user_id).values(first=first, last=last)
                 conn.execute(update)
 
@@ -65,7 +65,7 @@ def update_user(user_id, first, last):
 
 def delete_user(user_id):
     with db.connect() as conn:
-        if find_user.by_id(user_id):
+        if by_id(user_id):
             conn.execute(basic_user.delete().where(basic_user.c.id == user_id))
 
             return f"Deleted user @ id:{user_id}"

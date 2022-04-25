@@ -1,0 +1,37 @@
+version: '3.3'
+services:
+    flask-production:
+        ports:
+            - '80:80'
+        image: tiangolo/meinheld-gunicorn
+
+    worker-production:
+      command: tail -f /dev/null
+      image: python:3.8
+
+    rabbitmq-production:
+      hostname: rabbit
+      image: 'rabbitmq:3.8-management-alpine'
+      ports:
+        - '15672:15672'
+        - '5672:5672'
+      environment:
+        - RABBITMQ_DEFAULT_USER=idoT
+        - RABBITMQ_DEFAULT_PASS=JellyBeans
+      volumes:
+        - rabbitmq_log:/var/log/rabbitmq
+        - rabbitmq_data:/var/lib/rabbitmq
+
+    postgres-production:
+      hostname: postgres
+      image: 'postgres'
+      ports:
+        - 5432:5432
+      environment:
+        - POSTGRES_PASSWORD=ShrimpCalzone
+        - POSTGRES_USER=idoT
+        - POSTGRES_DB=PostgresDB
+
+volumes:
+  rabbitmq_log:
+  rabbitmq_data:

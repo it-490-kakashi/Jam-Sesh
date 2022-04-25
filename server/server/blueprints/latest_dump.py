@@ -4,9 +4,10 @@ import dotenv
 from flask import Blueprint, render_template
 from .creds import celery_link
 
-user_dump = Blueprint("user_dump", __name__, static_folder="../static", template_folder="../templates")
-
 dotenv.load_dotenv()
+
+user_dump = Blueprint("user_dump", __name__, static_folder=os.getenv("CURR_PATH")+"\static", template_folder=os.getenv("CURR_PATH")+"\templates")
+
 
 
 @user_dump.route('/user_dump')

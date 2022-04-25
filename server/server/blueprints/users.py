@@ -5,9 +5,10 @@ from flask import Blueprint, render_template
 from .creds import celery_link
 from .crud import show_all_users
 
-users = Blueprint("users", __name__, static_folder="../static", template_folder="../templates")
-
 dotenv.load_dotenv()
+
+users = Blueprint("users", __name__, static_folder=os.getenv("CURR_PATH")+"\static", template_folder=os.getenv("CURR_PATH")+"\templates")
+
 
 
 @users.route('/show_users')

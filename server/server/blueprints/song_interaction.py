@@ -2,10 +2,11 @@ from flask import Blueprint, request, redirect
 import dotenv
 from .creds import celery_link
 import time
+import os
 
 dotenv.load_dotenv()
 
-song_interaction = Blueprint('song_interaction', __name__, static_folder="../static", template_folder="../templates")
+song_interaction = Blueprint('song_interaction', __name__, static_folder=os.getenv("CURR_PATH")+"\static", template_folder=os.getenv("CURR_PATH")+"\templates")
 
 
 def get_liked_song(genius_id, user_id):

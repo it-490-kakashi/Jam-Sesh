@@ -5,9 +5,9 @@ import requests
 from flask import Blueprint, request, render_template
 from .creds import celery_link
 
-song_search = Blueprint("song_search", __name__, static_folder="../static", template_folder="../templates")
-
 dotenv.load_dotenv()
+
+song_search = Blueprint("song_search", __name__, static_folder=os.getenv("CURR_PATH")+"\static", template_folder=os.getenv("CURR_PATH")+"\templates")
 
 
 @song_search.route('/search', methods=['GET', 'POST'])
