@@ -1,0 +1,4 @@
+graft static
+graft templates
+include requirements.txt
+include *.py
