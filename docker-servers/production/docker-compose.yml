@@ -1,0 +1,51 @@
+version: "3.7"
+services:
+  postgres:
+    hostname: postgres
+    container_name: postgres
+    image: 'postgres'
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_PASSWORD=ShrimpCalzone
+      - POSTGRES_USER=idoT
+      - POSTGRES_DB=PostgresDB
+
+  rabbitmq:
+    hostname: rabbit
+    container_name: rabbit
+    image: 'rabbitmq:3.8-management-alpine'
+    ports:
+      - '15672:15672'
+      - '5672:5672'
+    environment:
+      - RABBITMQ_DEFAULT_USER=idoT
+      - RABBITMQ_DEFAULT_PASS=JellyBeans
+    volumes:
+      - rabbitmq_log:/var/log/rabbitmq
+      - rabbitmq_data:/var/lib/rabbitmq
+    depends_on:
+      - postgres
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      timeout: 30s
+      retries: 3
+
+  worker:
+    container_name: worker
+    build: ./worker
+    depends_on:
+      - server
+
+  server:
+    container_name: server
+    build: ./server
+    ports:
+    - "80:80"
+    depends_on:
+      - rabbitmq
+
+volumes:
+  rabbitmq_log:
+  rabbitmq_data:
