@@ -1,9 +1,10 @@
 FROM python:3.8
 
-COPY ./requirements.txt /
+COPY requirements.txt /
 RUN pip install -r /requirements.txt
 
-ADD . /worker
+ADD worker /worker
+COPY .env /worker
 WORKDIR /worker
 
 ENTRYPOINT celery -A tasks worker --loglevel=info

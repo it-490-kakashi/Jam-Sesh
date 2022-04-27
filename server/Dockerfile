@@ -4,6 +4,7 @@ COPY requirements.txt /
 RUN pip install -r /requirements.txt
 
 ADD server /flask_app
+COPY .env /flask_app
 WORKDIR /flask_app
 
 
