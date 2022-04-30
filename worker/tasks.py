@@ -10,6 +10,7 @@ import basic_crud as basic_crud
 import find_user as find_user
 import user_interactions as user_interactions
 import song_interactions as song_interactions
+from recommendation import get_recommended_songs
 
 load_dotenv()
 
@@ -124,6 +125,10 @@ def add_song(name, artist, genre, genius_id):
 @app.task()
 def find_song(name, artist):
     return song_interactions.find_song(name, artist)
+
+@app.task()
+def get_recommended(search):
+    return get_recommended_songs(search)
 
 
 # Celery Test Code
