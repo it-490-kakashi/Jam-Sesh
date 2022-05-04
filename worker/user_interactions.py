@@ -45,7 +45,7 @@ def register(username, firstname, lastname, email, password):
                                                      last_name=lastname,
                                                      username=username,
                                                      email=email,
-                                                     password=password,
+                                                     password=hash_password(password),
                                                      )
             conn.execute(result_data)
             return True
