@@ -10,7 +10,9 @@ from datetime import datetime, timedelta
 
 def login(username, password):
     with db.connect() as conn:
-        if by_username(username):
+        query = basic_user.select().where(basic_user.c.username == username)
+        user = conn.execute(query).fetchone()
+        if user is not None and check_hash_password(password, user.password):
             # Hash Password
             query = basic_user.select().where(basic_user.c.username == username, basic_user.c.password == password)
             result = conn.execute(query).fetchone()
