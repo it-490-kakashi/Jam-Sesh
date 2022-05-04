@@ -14,15 +14,12 @@ def login(username, password):
         user = conn.execute(query).fetchone()
         if user is not None and check_hash_password(password, user.password):
             # Hash Password
-            query = basic_user.select().where(basic_user.c.username == username, basic_user.c.password == password)
-            result = conn.execute(query).fetchone()
+            result = user
             user_found = result is not None  # Return true if result has content
             if user_found:
-                update_time = basic_user.update().where(basic_user.c.username == username, basic_user.c.password ==
-                                                        password).values(last_login=datetime.now())
+                update_time = basic_user.update().where(basic_user.c.username == username).values(last_login=datetime.now())
                 conn.execute(update_time)
-                user_id = basic_user.select().where(basic_user.c.username == username,
-                                                    basic_user.c.password == password)
+                user_id = basic_user.select().where(basic_user.c.username == username)
                 user_id = conn.execute(user_id).fetchone()[0]
 
                 session_token = user_session_token(user_id)
