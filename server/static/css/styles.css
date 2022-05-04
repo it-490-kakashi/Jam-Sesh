@@ -237,3 +237,35 @@
 	left:2.9991791248321533px;
 	top:19.316680908203125px;
 }
+footer {
+	position: relative;
+	width: 100%;
+	bottom: 0px;
+	display: inline-block;
+}
+
+@media (max-width: 400px) {
+	body {
+		font-size: 0.4rem!important;
+	}
+	.table > :not(caption) > * > *  {
+		padding-left: 0rem;
+		padding-right: 0rem;
+
+	}
+}
+@media screen and (min-width: 401px ) and (max-width: 800px) {
+	body {
+		font-size: 0.5rem!important;
+	}
+}
+@media screen and (min-width: 801px ) and (max-width: 1079px) {
+	body {
+		font-size: 0.6rem!important;
+	}
+}
+@media screen and (min-width: 1080px ) {
+	body {
+		font-size: 1rem!important;
+	}
+}
