@@ -4,12 +4,14 @@ from models import basic_user, logged_in_user
 from find_user import by_username, by_email
 from basic_crud import get_user
 import secrets
+from werkzeug.security import generate_password_hash, check_password_hash, gen_salt
 from datetime import datetime, timedelta
 
 
 def login(username, password):
     with db.connect() as conn:
         if by_username(username):
+            # Hash Password
             query = basic_user.select().where(basic_user.c.username == username, basic_user.c.password == password)
             result = conn.execute(query).fetchone()
             user_found = result is not None  # Return true if result has content
@@ -79,3 +81,9 @@ def user_info_from_session_token(session_token):
             user_id = result[0]
             return get_user(user_id)
         return None
+
+def check_hash_password(password, hash_pass):
+    return check_password_hash(hash_pass, password)
+
+def hash_password(password):
+    return generate_password_hash(password)
