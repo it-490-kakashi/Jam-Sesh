@@ -34,17 +34,22 @@ services:
 
   worker:
     container_name: worker
-    build: ./worker
+    image: python:3.8
+    entrypoint:
+      - "tail"
+      - "-f"
+      - "/dev/null"
+    ports:
+      - '25:22'
     depends_on:
       - server
 
   server:
     container_name: server
-    build: ./server
+    image: tiangolo/uwsgi-nginx-flask:python3.8
     ports:
     - "80:80"
-    depends_on:
-      - rabbitmq
+    - "26:22"
 
 volumes:
   rabbitmq_log:
