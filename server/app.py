@@ -46,15 +46,17 @@ def hello_world():
 
 def fetch_news():
 
+    url = "https://bing-news-search1.p.rapidapi.com/news"
 
-    url = "https://music-news-api.p.rapidapi.com/news"
+    querystring = {"category": "Entertainment_Music", "safeSearch": "Off", "textFormat": "Raw"}
 
     headers = {
-        "X-RapidAPI-Host": "music-news-api.p.rapidapi.com",
+        "X-BingApis-SDK": "true",
+        "X-RapidAPI-Host": "bing-news-search1.p.rapidapi.com",
         "X-RapidAPI-Key": "5bcf48bf11msh7e2498cfa2449c0p1b31fejsn11fb62150ba6"
     }
 
-    response = requests.request("GET", url, headers=headers)
+    response = requests.request("GET", url, headers=headers, params=querystring)
 
     print(response.text)
 
