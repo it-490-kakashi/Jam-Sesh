@@ -11,7 +11,7 @@ from blueprints.topchart import topten_charts
 from blueprints.topsong import top_songs
 from blueprints.creds import celery_link
 import time
-
+import requests
 load_dotenv()
 
 app = Flask(__name__)
@@ -36,13 +36,28 @@ def hello_world():
 
     title = 'Home Page'
 
-    news_elements = celery_link.send_task("tasks.get_news")
+    #news_elements = celery_link.send_task("tasks.get_news")
 
-    while str(celery_link.AsyncResult(news_elements.id).state) != "SUCCESS":
-        time.sleep(0.05)
-    news_elements = celery_link.AsyncResult(news_elements.id).result
-
+    #while str(celery_link.AsyncResult(news_elements.id).state) != "SUCCESS":
+        #time.sleep(0.05)
+    #news_elements = celery_link.AsyncResult(news_elements.id).result
+    news_elements = fetch_news()
     return render_template('home.html', title=title, news=news_elements)
+
+def fetch_news():
+
+
+    url = "https://music-news-api.p.rapidapi.com/news"
+
+    headers = {
+        "X-RapidAPI-Host": "music-news-api.p.rapidapi.com",
+        "X-RapidAPI-Key": "5bcf48bf11msh7e2498cfa2449c0p1b31fejsn11fb62150ba6"
+    }
+
+    response = requests.request("GET", url, headers=headers)
+
+    print(response.text)
+
 
 @app.route('/search')
 def hello_search():
