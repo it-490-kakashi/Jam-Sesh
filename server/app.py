@@ -36,11 +36,6 @@ def hello_world():
 
     title = 'Home Page'
 
-    #news_elements = celery_link.send_task("tasks.get_news")
-
-    #while str(celery_link.AsyncResult(news_elements.id).state) != "SUCCESS":
-        #time.sleep(0.05)
-    #news_elements = celery_link.AsyncResult(news_elements.id).result
     news_elements = fetch_news()
     return render_template('home.html', title=title, news=news_elements)
 
