@@ -55,10 +55,18 @@ def fetch_news():
         "X-RapidAPI-Host": "bing-news-search1.p.rapidapi.com",
         "X-RapidAPI-Key": "5bcf48bf11msh7e2498cfa2449c0p1b31fejsn11fb62150ba6"
     }
-
-    response = requests.request("GET", url, headers=headers, params=querystring)
-
-    print(response.text)
+    results = []
+    response = requests.request("GET", url, headers=headers, params=querystring).json()
+    for article in response['value']:
+        result = {
+            'Title': article['name'],
+            'Body': article['description'],
+            'Published': article['datePublished'],
+            'Author': article['url'],
+            'Image': article['image']['thumbnail']['contentUrl']
+        }
+        results.append(result)
+    return results
 
 
 @app.route('/search')
