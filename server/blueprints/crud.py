@@ -8,6 +8,7 @@ import dotenv
 from flask import Blueprint, request
 from .creds import celery_link
 import requests
+import hashlib
 
 crud = Blueprint("crud", __name__, static_folder="../static", template_folder="../templates")
 
@@ -42,7 +43,8 @@ def add_test_user():
 
     user_task_ids = []
     for user in test_users:
-        hashword = hash(user['password'])
+        hash_input = hashlib.sha256(user['password'].encode())
+        hashword = hash_input
         user_task = celery_link.send_task("tasks.add_user", kwargs={"first_name": user['first_name'],
                                                                     "last_name": user['last_name'],
                                                                     "email": user['email'],
@@ -55,13 +57,14 @@ def add_test_user():
 
 @crud.route("/add_user")
 def add_user():
-    hashword = hash(request.form["password"])
+    hash_input = hashlib.sha256(request.form["password"].encode())
+    hashword = hash_input
     user_task = celery_link.send_task("tasks.add_user", kwargs={"first_name": request.form["first_name"],
                                                                 "last_name": request.form["last_name"],
                                                                 "email": request.form["email"],
                                                                 "username": request.form["username"],
                                                                 "password": request.form["password"],
-                                                                "hashed password": hashword})
+                                                                "hashed": hashword})
     return user_task.id
 
 
