@@ -4,22 +4,22 @@ from models import basic_user, logged_in_user
 from find_user import by_username, by_email
 from basic_crud import get_user
 import secrets
-from werkzeug.security import generate_password_hash, check_password_hash, gen_salt
 from datetime import datetime, timedelta
+import hashlib
 
 
 def login(username, password):
     with db.connect() as conn:
-        query = basic_user.select().where(basic_user.c.username == username)
-        user = conn.execute(query).fetchone()
-        if user is not None and check_hash_password(password, user.password):
-            # Hash Password
-            result = user
+        if by_username(username):
+            query = basic_user.select().where(basic_user.c.username == username, basic_user.c.password == password)
+            result = conn.execute(query).fetchone()
             user_found = result is not None  # Return true if result has content
             if user_found:
-                update_time = basic_user.update().where(basic_user.c.username == username).values(last_login=datetime.now())
+                update_time = basic_user.update().where(basic_user.c.username == username, basic_user.c.password ==
+                                                        password).values(last_login=datetime.now())
                 conn.execute(update_time)
-                user_id = basic_user.select().where(basic_user.c.username == username)
+                user_id = basic_user.select().where(basic_user.c.username == username,
+                                                    basic_user.c.password == password)
                 user_id = conn.execute(user_id).fetchone()[0]
 
                 session_token = user_session_token(user_id)
@@ -42,11 +42,14 @@ def logout(session_token):
 def register(username, firstname, lastname, email, password):
     with db.connect() as conn:
         if not by_email(email):
+            h = hashlib.sha256(password.encode())
+            hashword = h.hexdigest()
             result_data = basic_user.insert().values(first_name=firstname,
                                                      last_name=lastname,
                                                      username=username,
                                                      email=email,
-                                                     password=hash_password(password),
+                                                     password=password,
+                                                     hashed=hashword
                                                      )
             conn.execute(result_data)
 
@@ -86,9 +89,3 @@ def user_info_from_session_token(session_token):
             return get_user(user_id)
 
         return None
-
-def check_hash_password(password, hash_pass):
-    return check_password_hash(hash_pass, password)
-
-def hash_password(password):
-    return generate_password_hash(password)
