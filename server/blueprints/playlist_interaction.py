@@ -29,19 +29,21 @@ def create_playlist():
 
 # Read
 def get_users_playlist():
-    token = request.cookies.get('session_token')
-    playlist_list = celery_link.send_task('tasks.get_user_playlists', kwargs={'token': token})
-    while str(celery_link.AsyncResult(playlist_list.id).state) != "SUCCESS":
-        time.sleep(0.25)
-    playlist_list = celery_link.AsyncResult(playlist_list.id).result
-    new_list = []
-    for item in playlist_list:
-        new_elm = {
-            'id': item[0],
-            'name': item[2]
-        }
-        new_list.append(new_elm)
-    return new_list
+    if token_valid():
+        token = request.cookies.get('session_token')
+        playlist_list = celery_link.send_task('tasks.get_user_playlists', kwargs={'token': token})
+        while str(celery_link.AsyncResult(playlist_list.id).state) != "SUCCESS":
+            time.sleep(0.25)
+        playlist_list = celery_link.AsyncResult(playlist_list.id).result
+        new_list = []
+        for item in playlist_list:
+            new_elm = {
+                'id': item[0],
+                'name': item[2]
+            }
+            new_list.append(new_elm)
+        return new_list
+    return False
 
 
 @playlist_interaction.route('/')
@@ -49,9 +51,12 @@ def show_playlist():
     context = {
         'title': 'User Playlists'
     }
+    playlists = get_users_playlist()
+    if playlists is False:
+        return redirect('/login')
 
     # get playlist content
-    return render_template('playlist.html', title=context['title'], playlists=get_users_playlist())
+    return render_template('playlist.html', title=context['title'], playlists=playlists)
 
 
 @playlist_interaction.route('/<int:id>')
