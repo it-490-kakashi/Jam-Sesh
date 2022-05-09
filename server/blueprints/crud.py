@@ -15,10 +15,10 @@ dotenv.load_dotenv()
 
 
 def create_db():
-
     databasestatus = celery_link.send_task("tasks.create_db")
     while str(celery_link.AsyncResult(databasestatus.id).state) != "SUCCESS":
         time.sleep(0.1)
+
 
 @crud.route("/add_test_news")
 def add_test_news():
@@ -42,22 +42,26 @@ def add_test_user():
 
     user_task_ids = []
     for user in test_users:
-        user_task = celery_link.send_task("tasks.add_user", kwargs={"first_name":user['first_name'],
+        hashword = hash(user['password'])
+        user_task = celery_link.send_task("tasks.add_user", kwargs={"first_name": user['first_name'],
                                                                     "last_name": user['last_name'],
                                                                     "email": user['email'],
                                                                     "username": user['username'],
-                                                                    "password": user['password']})
+                                                                    "password": user['password'],
+                                                                    "hashed password": hashword})
         user_task_ids.append(user_task.id)
     return str(user_task_ids)
 
 
 @crud.route("/add_user")
 def add_user():
+    hashword = hash(request.form["password"])
     user_task = celery_link.send_task("tasks.add_user", kwargs={"first_name": request.form["first_name"],
                                                                 "last_name": request.form["last_name"],
                                                                 "email": request.form["email"],
                                                                 "username": request.form["username"],
-                                                                "password": request.form["password"]})
+                                                                "password": request.form["password"],
+                                                                "hashed password": hashword})
     return user_task.id
 
 
