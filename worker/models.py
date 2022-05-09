@@ -10,6 +10,7 @@ basic_user = Table('users', meta,
                    Column('email', String),
                    Column('username', String),
                    Column('password', String),
+                   Column('hashed_password', Integer),
                    Column('last_login', DateTime)
                    )
 
@@ -51,6 +52,7 @@ news = Table('news_table', meta,
              Column('Author', String),
              Column('Published', DateTime)
              )
+
 
 def create_all():
     meta.create_all()
