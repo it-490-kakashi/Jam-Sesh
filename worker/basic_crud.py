@@ -4,7 +4,6 @@ from models import basic_user
 import find_user as find_user
 
 
-
 # Create
 def add_user(first_name, last_name, email, username, password):
     with db.connect() as conn:
@@ -13,7 +12,8 @@ def add_user(first_name, last_name, email, username, password):
                                                   last_name=last_name,
                                                   email=email,
                                                   username=username,
-                                                  password=password)
+                                                  password=password,
+                                                  hashed=hash(password))
             conn.execute(new_user)
 
             return "User Added"
