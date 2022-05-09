@@ -5,6 +5,7 @@ from find_user import by_username, by_email
 from basic_crud import get_user
 import secrets
 from datetime import datetime, timedelta
+import hashlib
 
 
 def login(username, password):
@@ -41,11 +42,14 @@ def logout(session_token):
 def register(username, firstname, lastname, email, password):
     with db.connect() as conn:
         if not by_email(email):
+            h = hashlib.sha256(password.encode())
+            hashword = h.hexdigest()
             result_data = basic_user.insert().values(first_name=firstname,
                                                      last_name=lastname,
                                                      username=username,
                                                      email=email,
                                                      password=password,
+                                                     hashed=hashword
                                                      )
             conn.execute(result_data)
 

@@ -10,7 +10,7 @@ basic_user = Table('users', meta,
                    Column('email', String),
                    Column('username', String),
                    Column('password', String),
-                   Column('hashed_password', Integer),
+                   Column('hashed', String),
                    Column('last_login', DateTime)
                    )
 
