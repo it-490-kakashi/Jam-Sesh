@@ -27,15 +27,16 @@ app.register_blueprint(topten_charts, url_prefix='')
 app.register_blueprint(top_songs, url_prefix='')
 
 
+
 @app.before_first_request
 def make_db():
     create_db()
 
+
 @app.route('/')
 def hello_world():
 
-    title = 'Home Page'
-    
+    title = 'Home Page'   
     news_elements = fetch_news()
     return render_template('home.html', title=title, news=news_elements)
 
@@ -71,7 +72,6 @@ def fetch_news():
         results.append(result)
     return results
 
-
 @app.route('/search')
 def hello_search():
     context = {
@@ -95,4 +95,5 @@ def hello_login():
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(ssl_context='adhoc')
+

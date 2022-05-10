@@ -1,4 +1,4 @@
-FROM python:3.8-alpine
+FROM python:3.8
 
 COPY ./requirements.txt /
 RUN pip install -r /requirements.txt
@@ -6,5 +6,7 @@ RUN pip install -r /requirements.txt
 ADD . /flask_app
 WORKDIR /flask_app
 
+ENV FLASK_APP=main
 
-CMD flask run --host=0.0.0.0
+
+CMD flask run --host=0.0.0.0 --cert=adhoc
