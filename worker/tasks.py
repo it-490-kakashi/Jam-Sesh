@@ -8,13 +8,11 @@ import basic_crud as basic_crud
 import find_user as find_user
 import user_interactions as user_interactions
 import song_interactions as song_interactions
-from recommendation import get_recommended_songs
 import playlist_interactions as play_inter
 from databaseseed import has_news, seed_news
 from socialTasks import get_news_db
 from dump_user import create_dump, retrieve_latest_dump
 from run_tasks import run_jobs, add_jobs
-
 
 load_dotenv()
 
@@ -140,9 +138,6 @@ def find_song(name, artist):
     return song_interactions.find_song(name, artist)
 
 @app.task()
-def get_recommended(search):
-    return get_recommended_songs(search)
-  
 def update_views(genius_id):
     song_interactions.increaseView(genius_id)
     # to-do call increase views
