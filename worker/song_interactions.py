@@ -97,3 +97,9 @@ def find_song_by_id(song_id):
         query = song_list.select().where(song_list.c.genius_id == song_id)
         result = conn.execute(query)
         return len(result.fetchall()) > 0
+
+def get_all_songs():
+    with db.connect() as conn:
+        query = song_list.select()
+        result = conn.execute(query)
+        return result.fetchall()

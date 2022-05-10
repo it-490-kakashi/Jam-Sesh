@@ -148,6 +148,10 @@ def get_views(genius_id):
     # Celery Test Code
 
 @app.task()
+def get_songs():
+    return song_interactions.get_all_songs()
+
+@app.task()
 def seed_if_empty():
     if not has_news():
         seed_news()

@@ -87,7 +87,7 @@ def playlist_add_song():
                                    message="Song ID not found")
         return redirect(f'/playlist/{playlist_id}')
 
-    return render_template('add_to_playlist.html', title="Add to Playlist", playlists=get_users_playlist())
+    return render_template('add_to_playlist.html', title="Add to Playlist", playlists=get_users_playlist(), songs=get_songs())
 
 
 @playlist_interaction.route('/remove', methods=['POST'])
@@ -121,3 +121,12 @@ def playlist_delete(id):
     celery_link.send_task('tasks.delete_playlist', kwargs={'token': request.cookies.get('session_token'),
                                                            'playlist_id': id})
     return redirect('/playlist')
+
+
+# Pull site songs
+def get_songs():
+    get_songs_task = celery_link.send_task('tasks.get_songs')
+    while str(celery_link.AsyncResult(get_songs_task.id).state) != "SUCCESS":
+        time.sleep(0.25)
+    songs_list = celery_link.AsyncResult(get_songs_task.id).result
+    return songs_list
