@@ -33,9 +33,9 @@ def make_db():
     create_db()
     celery_link.AsyncResult("tasks.schedule_tasks")
 
-
 @app.route('/')
 def hello_world():
+
     title = 'Home Page'
 
     news_elements = celery_link.send_task("tasks.get_news")
@@ -46,7 +46,6 @@ def hello_world():
     # celery_link.send_task("tasks.run_dump")
     return render_template('home.html', title=title, news=news_elements)
 
-
 @app.route('/search')
 def hello_search():
     context = {
@@ -54,14 +53,12 @@ def hello_search():
     }
     return render_template('search.html', data=context)
 
-
 @app.route('/register')
 def hello_register():
     context = {
         'title': 'Register Page'
     }
     return render_template('register.html.html', data=context)
-
 
 @app.route('/login')
 def hello_login():

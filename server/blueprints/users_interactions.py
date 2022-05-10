@@ -1,4 +1,3 @@
-import hashlib
 import os
 import time
 import dotenv
@@ -20,8 +19,7 @@ def login():
         if request.method == 'POST':
             username = request.form["username"]
             passwd = request.form["password"]
-            hashword = hash(passwd)
-            login_request = celery_link.send_task("tasks.login", kwargs={'username': username, 'password': passwd, 'hashed password' : hashword})
+            login_request = celery_link.send_task("tasks.login", kwargs={'username': username, 'password': passwd})
             while str(celery_link.AsyncResult(login_request.id).state) != "SUCCESS":
                 time.sleep(0.25)
             login_task_result = celery_link.AsyncResult(login_request.id).result
@@ -49,11 +47,11 @@ def register():
             password = request.form["password"]
             confirm = request.form["confirm"]
             register_tasks = celery_link.send_task("tasks.register",
-                                                   kwargs={'first_name': first,
-                                                           'last_name': last,
-                                                           'email': email,
-                                                           'username': usr,
-                                                           'password': password})
+                               kwargs={'first_name': first,
+                                       'last_name': last,
+                                       'email': email,
+                                       'username': usr,
+                                       'password': password})
 
             while str(celery_link.AsyncResult(register_tasks.id).state) != "SUCCESS":
                 time.sleep(0.25)
@@ -61,8 +59,7 @@ def register():
             if register_result:
                 return redirect('/login')
             else:
-                return render_template('register.html', message="Email already in use!", first=first, last=last,
-                                       username=usr, password=password, confirm=confirm)
+                return render_template('register.html', message="Email already in use!", first=first, last=last, username=usr, password=password, confirm=confirm)
     return redirect('/account')
 
 
@@ -92,15 +89,14 @@ def account_page():
     session_token = request.cookies.get('session_token')
     if not token_valid():
         return redirect('/login')
-    session_valid = celery_link.send_task('tasks.token_valid', kwargs={'session_token': session_token})
+    session_valid = celery_link.send_task('tasks.token_valid', kwargs={'session_token':session_token})
     while str(celery_link.AsyncResult(session_valid.id).state) != "SUCCESS":
         time.sleep(0.25)
     session_valid = celery_link.AsyncResult(session_valid.id).result
     # if token valid
     if session_valid:
         # Send token to backend asking for user information
-        account_info = celery_link.send_task('tasks.user_info_from_session_token',
-                                             kwargs={'session_token': session_token})
+        account_info = celery_link.send_task('tasks.user_info_from_session_token', kwargs={'session_token':session_token})
         while str(celery_link.AsyncResult(account_info.id).state) != "SUCCESS":
             time.sleep(0.25)
         # Get user info from backend
@@ -119,8 +115,9 @@ def account_page():
 def token_valid():
     session_token = request.cookies.get('session_token')
     if session_token is not None:
-        session_valid_task = celery_link.send_task('tasks.token_valid', kwargs={'session_token': session_token})
+        session_valid_task = celery_link.send_task('tasks.token_valid', kwargs={'session_token':session_token})
         while str(celery_link.AsyncResult(session_valid_task.id).state) != "SUCCESS":
             time.sleep(0.25)
         return celery_link.AsyncResult(session_valid_task.id).result
     return False
+

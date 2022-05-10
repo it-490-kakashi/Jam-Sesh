@@ -10,7 +10,7 @@ def json_serial(obj):
 
     if isinstance(obj, (datetime, date)):
         return obj.isoformat()
-    raise TypeError("Type %s not serializable" % type(obj))
+    raise TypeError ("Type %s not serializable" % type(obj))
 
 
 def create_dump():
@@ -24,8 +24,7 @@ def create_dump():
             f = open(json_file, "x")
             users_list = []
             for item in users:
-                users_list.append({'first_name': item.first_name, 'last_name': item.last_name, 'email': item.email,
-                                   'user_name': item.username})
+                users_list.append({'first_name':item.first_name, 'last_name':item.last_name, 'email':item.email, 'user_name':item.username})
             f.write(json.dumps(users_list))
             # print(users)
             print("jsonstring " + json.dumps(users_list))
@@ -38,7 +37,6 @@ def create_dump():
 
         return "dump unsuccessful"
 
-
 def retrieve_latest_dump():
     script_dir = os.path.dirname(__file__)
     rel_path = "/"
@@ -48,8 +46,7 @@ def retrieve_latest_dump():
     latest_dump = ""
     for item in dir_list:
         temp_file = os.path.join(json_file, item)
-        print(temp_file + " , " + " , " + str(temp_file.__contains__("user_dump")) + " , " + str(
-            (latest_dump < temp_file)))
+        print(temp_file + " , " +  " , " + str(temp_file.__contains__("user_dump")) + " , " + str((latest_dump < temp_file)))
         if temp_file.__contains__("user_dump") and latest_dump < temp_file:
             latest_dump = temp_file
             print(latest_dump)

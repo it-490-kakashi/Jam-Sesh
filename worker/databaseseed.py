@@ -4,13 +4,11 @@ from datetime import datetime
 import sqlalchemy as sql
 from sqlalchemy import update
 
-
 def has_news():
     with db.connect() as conn:
-        result = news.select().where(news.c.id != 0)
+        result = news.select().where(news.c.id!=0)
         result = conn.execute(result).fetchone()
         return result is not None
-
 
 def seed_news():
     with db.connect() as conn:
