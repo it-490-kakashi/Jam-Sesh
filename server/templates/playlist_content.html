@@ -1,0 +1,57 @@
+{% extends 'base.html'%}
+{% block content %}
+<div class="container">
+<h1>{{ playlist.name }}</h1>
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">Song Name</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for song in playlist %}
+    <tr>
+        <th><a class="text-black" href="/song?id={{ song.genius_id }}">{{ song.name }}</a></th>
+        <th>{{ song.artist }}</th>
+        <th class="d-flex justify-content-end"><a class="text-danger" href="#" onClick="delete_song_modal('{{ song.genius_id }}','{{ song.name }}')">Remove</a></th>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+<div class="modal fade" id="delete-conformation-modal" tabindex="-1" role="dialog" aria-labelledby="delete-conformation-modal-label" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="delete-conformation-modal-label">Remove Song From Playlist</h5>
+            <button type="button" class="btn-close" onClick="$('#delete-conformation-modal').modal('hide')">
+            </button>
+          </div>
+          <div class="modal-body">
+            Are you sure you want to remove '<strong><span id="song-name">...</span></strong>'?
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onClick="$('#delete-conformation-modal').modal('hide')">Close</button>
+              <form action="/playlist/remove" method="post">
+                  <input class="visually-hidden" type="text" id="song_id" name="song_id">
+                  <input class="visually-hidden" type="text" id="playlist_id" name="playlist_id">
+                  <button type="submit" class="btn btn-danger">Remove</button>
+              </form>
+
+          </div>
+        </div>
+      </div>
+    </div>
+{% endblock %}
+
+
+{% block extra_js %}
+<script>
+    function delete_song_modal(id, name){
+        $('#song-name').text(name)
+        $('input[name="song_id"]').val(id)
+        $('input[name="playlist_id"]').val({{ playlist_id }})
+        $('#delete-conformation-modal').modal('show')
+    }
+</script>
+{% endblock %}

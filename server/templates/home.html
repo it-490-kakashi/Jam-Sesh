@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block content %}
+    {% if news is defined  %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Title</th>
+                    <th scope="col">Body</th>
+                    <th scope="col">Author</th>
+                    <th scope="col">Published</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for result in news %}
+                    <tr>
+
+                        <td>{{ result.Title }}</td>
+                        <td>{{ result.Body }}</td>
+                        <td>{{ result.Author }}</td>
+                        <td>{{ result.Published }}</td>
+                        {#{% if result.liked is true %}
+                        <td><h3><i class="bi bi-heart-fill"></i></h3></td>
+                        {% else %}
+                        <td><h3><i class="bi bi-heart"></i></h3></td>
+                        {% endif %}#}
+                    </tr>
+                {% endfor %}
+            </tbody>
+
+
+        </table>
+    {% endif %}
+{% endblock %}

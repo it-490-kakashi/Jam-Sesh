@@ -23,13 +23,14 @@ def login():
             while str(celery_link.AsyncResult(login_request.id).state) != "SUCCESS":
                 time.sleep(0.25)
             login_task_result = celery_link.AsyncResult(login_request.id).result
+            if login_task_result is None:
+                return render_template('login.html', title=title, message="ERROR: Credentials incorrect")
             if login_task_result[0]:
                 if request.cookies.get('session_token') is None:
                     resp = make_response(redirect('/account'))
                     resp.set_cookie(key='session_token', value=login_task_result[1])
                     return resp
                 return redirect('/account')
-            return render_template('login.html', title=title, message="ERROR: Credentials incorrect")
     return redirect('/account')
 
 
