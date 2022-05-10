@@ -7,6 +7,7 @@ from .creds import celery_link
 import logging
 import sys
 
+
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 formatter = logging.Formatter('%(asctime)s | %(levelname)s | %(message)s',

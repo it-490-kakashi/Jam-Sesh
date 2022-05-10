@@ -1,12 +1,13 @@
-from sqlalchemy import exc
-from creds import db
-from models import basic_user, logged_in_user
-from find_user import by_username, by_email
-from basic_crud import get_user
-import secrets
-from datetime import datetime, timedelta
 import hashlib
-import logging, sys
+import logging
+import secrets
+import sys
+from datetime import datetime, timedelta
+
+from basic_crud import get_user
+from creds import db
+from find_user import by_username, by_email
+from models import basic_user, logged_in_user
 
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)

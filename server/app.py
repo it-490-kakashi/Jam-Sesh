@@ -13,6 +13,7 @@ from blueprints.creds import celery_link
 from blueprints.latest_dump import user_dump
 import time
 
+
 load_dotenv()
 
 app = Flask(__name__)
