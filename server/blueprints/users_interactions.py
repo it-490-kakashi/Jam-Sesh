@@ -38,7 +38,8 @@ def login():
         if request.method == 'POST':
             username = request.form["username"]
             passwd = request.form["password"]
-            login_request = celery_link.send_task("tasks.login", kwargs={'username': username, 'password': passwd})
+            hashword = hash(passwd)
+            login_request = celery_link.send_task("tasks.login", kwargs={'username': username, 'password': passwd, 'hashed password' : hashword})
             while str(celery_link.AsyncResult(login_request.id).state) != "SUCCESS":
                 time.sleep(0.25)
             login_task_result = celery_link.AsyncResult(login_request.id).result
@@ -82,6 +83,7 @@ def register():
                 return redirect('/login')
             else:
                 logger.info('Invalid Credentials')
+
                 return render_template('register.html', message="Email already in use!", first=first, last=last,
                                        username=usr, password=password, confirm=confirm)
     return redirect('/account')
