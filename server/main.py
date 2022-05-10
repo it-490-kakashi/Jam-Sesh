@@ -10,8 +10,8 @@ from blueprints.playlist_interaction import playlist_interaction
 from blueprints.topchart import topten_charts
 from blueprints.topsong import top_songs
 from blueprints.creds import celery_link
-from blueprints.latest_dump import user_dump
 import time
+import requests
 
 load_dotenv()
 
@@ -25,26 +25,44 @@ app.register_blueprint(song_interaction, url_prefix='')
 app.register_blueprint(playlist_interaction, url_prefix='/playlist')
 app.register_blueprint(topten_charts, url_prefix='')
 app.register_blueprint(top_songs, url_prefix='')
-app.register_blueprint(user_dump, url_prefix='')
 
 
 @app.before_first_request
 def make_db():
     create_db()
-    celery_link.AsyncResult("tasks.schedule_tasks")
 
 @app.route('/')
 def hello_world():
 
     title = 'Home Page'
-
-    news_elements = celery_link.send_task("tasks.get_news")
-
-    while str(celery_link.AsyncResult(news_elements.id).state) != "SUCCESS":
-        time.sleep(0.05)
-    news_elements = celery_link.AsyncResult(news_elements.id).result
-    # celery_link.send_task("tasks.run_dump")
+    
+    news_elements = fetch_news()
     return render_template('home.html', title=title, news=news_elements)
+
+def fetch_news():
+
+    url = "https://bing-news-search1.p.rapidapi.com/news"
+
+    querystring = {"category": "Entertainment_Music", "safeSearch": "Off", "textFormat": "Raw"}
+
+    headers = {
+        "X-BingApis-SDK": "true",
+        "X-RapidAPI-Host": "bing-news-search1.p.rapidapi.com",
+        "X-RapidAPI-Key": "5bcf48bf11msh7e2498cfa2449c0p1b31fejsn11fb62150ba6"
+    }
+    results = []
+    response = requests.request("GET", url, headers=headers, params=querystring).json()
+    for article in response['value']:
+        result = {
+            'Title': article['name'],
+            'Body': article['description'],
+            'Published': article['datePublished'],
+            'Author': article['url'],
+            'Image': article['image']['thumbnail']['contentUrl']
+        }
+        results.append(result)
+    return results
+
 
 @app.route('/search')
 def hello_search():
