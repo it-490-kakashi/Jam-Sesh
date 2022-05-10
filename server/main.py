@@ -53,13 +53,21 @@ def fetch_news():
     results = []
     response = requests.request("GET", url, headers=headers, params=querystring).json()
     for article in response['value']:
-        result = {
-            'Title': article['name'],
-            'Body': article['description'],
-            'Published': article['datePublished'],
-            'Author': article['url'],
-            'Image': article['image']['thumbnail']['contentUrl']
-        }
+        try:
+            result = {
+                'Title': article['name'],
+                'Body': article['description'],
+                'Published': article['datePublished'],
+                'Author': article['url'],
+                'Image': article['image']['thumbnail']['contentUrl']
+            }
+        except KeyError:
+            result = {
+                'Title': article['name'],
+                'Body': article['description'],
+                'Published': article['datePublished'],
+                'Author': article['url']
+            }
         results.append(result)
     return results
 
