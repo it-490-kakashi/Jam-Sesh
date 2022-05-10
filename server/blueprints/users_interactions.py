@@ -4,6 +4,24 @@ import time
 import dotenv
 from flask import Blueprint, request, render_template, redirect, make_response
 from .creds import celery_link
+import logging
+import sys
+
+logger = logging.getLogger()
+logger.setLevel(logging.DEBUG)
+formatter = logging.Formatter('%(asctime)s | %(levelname)s | %(message)s',
+                              '%m-%d-%Y %H:%M:%S')
+
+stdout_handler = logging.StreamHandler(sys.stdout)
+stdout_handler.setLevel(logging.DEBUG)
+stdout_handler.setFormatter(formatter)
+
+file_handler = logging.FileHandler('../logs.log', mode='a')
+file_handler.setLevel(logging.DEBUG)
+file_handler.setFormatter(formatter)
+
+logger.addHandler(file_handler)
+logger.addHandler(stdout_handler)
 
 users_interactions = Blueprint("users_interactions", __name__, static_folder="../static",
                                template_folder="../templates")
@@ -25,14 +43,16 @@ def login():
             while str(celery_link.AsyncResult(login_request.id).state) != "SUCCESS":
                 time.sleep(0.25)
             login_task_result = celery_link.AsyncResult(login_request.id).result
-            if login_task_result is None:
-                return render_template('login.html', title=title, message="ERROR: Credentials incorrect")
             if login_task_result[0]:
                 if request.cookies.get('session_token') is None:
                     resp = make_response(redirect('/account'))
                     resp.set_cookie(key='session_token', value=login_task_result[1])
+                    logger.info('Session Cookie Generated')
                     return resp
+                logger.info('User Login Successful')
                 return redirect('/account')
+            logger.info('Invalid Credentials')
+            return render_template('login.html', title=title, message="ERROR: Credentials incorrect")
     return redirect('/account')
 
 
@@ -59,8 +79,11 @@ def register():
                 time.sleep(0.25)
             register_result = celery_link.AsyncResult(register_tasks.id).result
             if register_result:
+                logger.info('User Registered')
                 return redirect('/login')
             else:
+                logger.info('Invalid Credentials')
+
                 return render_template('register.html', message="Email already in use!", first=first, last=last,
                                        username=usr, password=password, confirm=confirm)
     return redirect('/account')
@@ -82,6 +105,7 @@ def logout():
             return resp
         # Log out user
         # Redirect to home
+    logger.info('User Logout')
     return redirect('/login')
     # redirect login
 
@@ -91,6 +115,7 @@ def account_page():
     # Get session token
     session_token = request.cookies.get('session_token')
     if not token_valid():
+        logger.info('Invalid Session')
         return redirect('/login')
     session_valid = celery_link.send_task('tasks.token_valid', kwargs={'session_token': session_token})
     while str(celery_link.AsyncResult(session_valid.id).state) != "SUCCESS":
@@ -112,6 +137,7 @@ def account_page():
             "username": account_info[4]
         }
         # Display user info on frontend
+        logger.info('Account Page')
         return render_template('account_profile.html', account=account_info)
     return redirect('/login')
 

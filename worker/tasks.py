@@ -30,9 +30,11 @@ def create_db():
     add_jobs()
     run_jobs()
 
+
 @app.task()
 def get_latest_dump():
     return retrieve_latest_dump()
+
 
 # User CRUD
 # Create
@@ -137,24 +139,29 @@ def add_song(name, artist, genre, genius_id):
 def find_song(name, artist):
     return song_interactions.find_song(name, artist)
 
+
 @app.task()
 def update_views(genius_id):
     song_interactions.increaseView(genius_id)
     # to-do call increase views
+
 
 @app.task()
 def get_views(genius_id):
     return song_interactions.getView(genius_id)
     # Celery Test Code
 
+
 @app.task()
 def seed_if_empty():
     if not has_news():
         seed_news()
 
+
 @app.task()
 def get_news():
     return get_news_db()
+
 
 # Playlist functions
 @app.task()
@@ -169,7 +176,8 @@ def get_user_playlists(token):
 
 @app.task()
 def update_playlist_name(token, playlist_id, new_name):
-    return play_inter.update_playlist_name(playlist_id, new_name, user_interactions.user_info_from_session_token(token)[0])
+    return play_inter.update_playlist_name(playlist_id, new_name,
+                                           user_interactions.user_info_from_session_token(token)[0])
 
 
 @app.task()
@@ -185,12 +193,15 @@ def show_playlist_content(playlist_id):
 
 @app.task()
 def add_song_to_playlist(song_id, playlist_id, token):
-    return play_inter.add_song_to_playlist(song_id, playlist_id, user_interactions.user_info_from_session_token(token)[0])
+    return play_inter.add_song_to_playlist(song_id, playlist_id,
+                                           user_interactions.user_info_from_session_token(token)[0])
 
 
 @app.task()
 def remove_song_from_playlist(song_id, playlist_id, token):
-    return play_inter.remove_song_from_playlist(song_id, playlist_id, user_interactions.user_info_from_session_token(token)[0])
+    return play_inter.remove_song_from_playlist(song_id, playlist_id,
+                                                user_interactions.user_info_from_session_token(token)[0])
+
 
 @app.task()
 def run_dump():
