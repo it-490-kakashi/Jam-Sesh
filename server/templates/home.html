@@ -7,7 +7,8 @@
                     <th scope="col">Title</th>
                     <th scope="col">Body</th>
                     <th scope="col">Author</th>
-                    <th scope="col">Published</th>
+                    <th scope="col">Image</th>
+
                 </tr>
             </thead>
             <tbody>
@@ -16,8 +17,8 @@
 
                         <td>{{ result.Title }}</td>
                         <td>{{ result.Body }}</td>
-                        <td>{{ result.Author }}</td>
-                        <td>{{ result.Published }}</td>
+                        <td><a href = '{{ result.Author }}'>article source</a></td>
+                        <td><img src = '{{ result.Image }}' alt = "article thumbnail"></td>
                         {#{% if result.liked is true %}
                         <td><h3><i class="bi bi-heart-fill"></i></h3></td>
                         {% else %}
@@ -30,5 +31,4 @@
 
         </table>
     {% endif %}
-
 {% endblock %}
