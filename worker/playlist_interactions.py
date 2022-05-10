@@ -12,6 +12,7 @@ def new_playlist(name, user_id):
                                                 user_id=user_id)
         # Execute new record
         conn.execute(new_playlist)
+
         return f"Made new playlist for user:{user_id}"
 
 
@@ -34,7 +35,9 @@ def delete_playlist(playlist_id, user_id):
     with db.connect() as conn:
         if user_owns_playlist(playlist_id, user_id):
             conn.execute(playlist.delete().where(playlist.c.id == playlist_id, playlist.c.user_id == user_id))
+
             return f"Deleted Playlist @ id:{playlist_id}"
+
         return f"ERROR: Playlist @ id:{playlist_id} not found or not owned"
 
 
@@ -81,7 +84,9 @@ def remove_song_from_playlist(song_id, playlist_id, user_id):
             query = playlist_content.delete().where(playlist_content.c.playlist_id == playlist_id,
                                                     playlist_content.c.song_id == song_id)
             conn.execute(query)
+
             return f"Delete song @ id:{song_id} from playlist @ id:{playlist_id}"
+
         return f"Song @ id:{song_id} is not in playlist @ id:{playlist_id} or playlist not owned by user"
 
 

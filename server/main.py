@@ -12,6 +12,7 @@ from blueprints.topsong import top_songs
 from blueprints.creds import celery_link
 import time
 import requests
+
 load_dotenv()
 
 app = Flask(__name__)
@@ -30,12 +31,11 @@ app.register_blueprint(top_songs, url_prefix='')
 def make_db():
     create_db()
 
-
 @app.route('/')
 def hello_world():
 
     title = 'Home Page'
-
+    
     news_elements = fetch_news()
     return render_template('home.html', title=title, news=news_elements)
 

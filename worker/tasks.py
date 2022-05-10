@@ -11,6 +11,8 @@ import song_interactions as song_interactions
 import playlist_interactions as play_inter
 from databaseseed import has_news, seed_news
 from socialTasks import get_news_db
+from dump_user import create_dump, retrieve_latest_dump
+from run_tasks import run_jobs, add_jobs
 
 load_dotenv()
 
@@ -25,7 +27,12 @@ app = Celery('task',
 @app.task()
 def create_db():
     create_all()
+    add_jobs()
+    run_jobs()
 
+@app.task()
+def get_latest_dump():
+    return retrieve_latest_dump()
 
 # User CRUD
 # Create
@@ -141,6 +148,10 @@ def get_views(genius_id):
     # Celery Test Code
 
 @app.task()
+def get_songs():
+    return song_interactions.get_all_songs()
+
+@app.task()
 def seed_if_empty():
     if not has_news():
         seed_news()
@@ -184,6 +195,10 @@ def add_song_to_playlist(song_id, playlist_id, token):
 @app.task()
 def remove_song_from_playlist(song_id, playlist_id, token):
     return play_inter.remove_song_from_playlist(song_id, playlist_id, user_interactions.user_info_from_session_token(token)[0])
+
+@app.task()
+def run_dump():
+    return create_dump()
 
 
 # Celery Test Code

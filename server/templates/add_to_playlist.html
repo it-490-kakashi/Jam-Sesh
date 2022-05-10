@@ -11,11 +11,23 @@
                     {% endfor %}
                 </select>
             </div>
-            <div class="mb-3">
-                <label class="form-label" for="song_id">Song ID:</label>
-                <input class="form-control" type="text" name="song_id" id="song_id">
+        <div class="mb-3">
+                <label class="form-label" for="song_id">Playlist:</label>
+                <select class="form-control" name="song_id" id="song_id">
+                    {% if songs|length == 0 %}
+                        <option value="None">No songs in Database</option>
+                    {% else %}
+                    {% for song in songs %}
+                        <option value="{{ song.genius_id }}">{{ song.name }} - {{ song.artist }}</option>
+                    {% endfor %}
+                    {% endif %}
+                </select>
             </div>
+            {% if songs|length == 0 %}
+            <button type="submit" class="btn btn-primary disabled">Submit</button>
+            {% else %}
             <button type="submit" class="btn btn-primary">Submit</button>
+            {% endif %}
         </form>
     </div>
     {% if message is defined %}
